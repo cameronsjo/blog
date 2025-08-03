@@ -1,0 +1,43 @@
+{
+  "name": "blog-project",
+  "version": "1.0.0",
+  "description": "A GitHub Pages blog with both Jekyll and Hugo static site generators",
+  "scripts": {
+    "setup": "./scripts/setup.sh",
+    "jekyll:serve": "./scripts/serve-jekyll.sh",
+    "jekyll:build": "./scripts/build-jekyll.sh",
+    "hugo:serve": "./scripts/serve-hugo.sh", 
+    "hugo:build": "./scripts/build-hugo.sh",
+    "sync": "./scripts/sync-content.sh",
+    "build": "npm run jekyll:build && npm run hugo:build",
+    "dev:jekyll": "npm run jekyll:serve",
+    "dev:hugo": "npm run hugo:serve"
+  },
+  "keywords": [
+    "blog",
+    "jekyll",
+    "hugo",
+    "static-site",
+    "github-pages"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "htmlhint": "^1.1.4",
+    "markdownlint-cli": "^0.37.0",
+    "prettier": "^3.0.0"
+  },
+  "prettier": {
+    "semi": true,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "printWidth": 80,
+    "proseWrap": "always"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/blog.git"
+  },
+  "homepage": "https://your-username.github.io"
+}

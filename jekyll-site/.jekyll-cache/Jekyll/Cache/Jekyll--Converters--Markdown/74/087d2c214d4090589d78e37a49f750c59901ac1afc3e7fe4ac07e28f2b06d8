@@ -1,0 +1,14 @@
+I"¹<h1 id="welcome-to-my-blog">Welcome to My Blog</h1>
+
+<p>This blog is built with Jekyll and Hugo static site generators for maximum flexibility.</p>
+
+<h2 id="recent-posts">Recent Posts</h2>
+
+<article>
+    <h3><a href="/2025/08/02/welcome-to-jekyll/">Welcome to Jekyll!</a></h3>
+    <time>August 02, 2025</time>
+    <p>Welcome to your new Jekyll blog! This is your first post.</p>
+  </article>
+
+<p><a href="/posts/">View all posts â†’</a></p>
+:ET

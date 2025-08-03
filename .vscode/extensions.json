@@ -1,0 +1,20 @@
+{
+  "recommendations": [
+    "ms-vscode.vscode-json",
+    "yzhang.markdown-all-in-one", 
+    "davidanson.vscode-markdownlint",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "formulahendry.auto-rename-tag",
+    "christian-kohler.path-intellisense",
+    "streetsidesoftware.code-spell-checker",
+    "redhat.vscode-yaml",
+    "ms-vscode.vscode-typescript-next",
+    "github.copilot",
+    "github.copilot-chat",
+    "ms-vsliveshare.vsliveshare",
+    "tamasfe.even-better-toml",
+    "shopify.ruby-lsp",
+    "budparr.language-hugo-vscode"
+  ]
+}

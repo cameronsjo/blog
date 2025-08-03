@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://0.0.0.0:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://0.0.0.0:4000/" rel="alternate" type="text/html" /><updated>2025-08-02T22:33:42-05:00</updated><id>http://0.0.0.0:4000/feed.xml</id><title type="html">My Blog</title><subtitle>A modern blog built with Jekyll and Hugo static site generators. Write an awesome description for your new site here.</subtitle><entry><title type="html">Welcome to Jekyll!</title><link href="http://0.0.0.0:4000/2025/08/02/welcome-to-jekyll/" rel="alternate" type="text/html" title="Welcome to Jekyll!" /><published>2025-08-02T05:00:00-05:00</published><updated>2025-08-02T05:00:00-05:00</updated><id>http://0.0.0.0:4000/2025/08/02/welcome-to-jekyll</id><content type="html" xml:base="http://0.0.0.0:4000/2025/08/02/welcome-to-jekyll/"><![CDATA[<h1 id="welcome-to-your-jekyll-blog">Welcome to Your Jekyll Blog!</h1>
+
+<p>You’ll find this post in your <code class="language-plaintext highlighter-rouge">_posts</code> directory. Go ahead and edit it and re-build the site to see your changes.</p>
+
+<p>Jekyll requires blog post files to be named according to the following format:</p>
+
+<p><code class="language-plaintext highlighter-rouge">YEAR-MONTH-DAY-title.MARKUP</code></p>
+
+<h2 id="getting-started">Getting Started</h2>
+
+<p>To add new posts, simply add a file in the <code class="language-plaintext highlighter-rouge">_posts</code> directory that follows the convention <code class="language-plaintext highlighter-rouge">_posts/YYYY-MM-DD-name-of-post.ext</code> and includes the necessary front matter.</p>
+
+<h3 id="code-highlighting">Code Highlighting</h3>
+
+<p>Jekyll offers powerful support for code snippets:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">print_hi</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+  <span class="nb">puts</span> <span class="s2">"Hi, </span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">"</span>
+<span class="k">end</span>
+<span class="n">print_hi</span><span class="p">(</span><span class="s1">'Jekyll'</span><span class="p">)</span>
+<span class="c1">#=&gt; prints 'Hi, Jekyll' to STDOUT.</span>
+</code></pre></div></div>
+
+<p>Check out the <a href="https://jekyllrb.com/docs/home">Jekyll docs</a> for more info.</p>]]></content><author><name>Your Name</name></author><category term="jekyll" /><category term="update" /><category term="jekyll" /><category term="blog" /><category term="getting-started" /><summary type="html"><![CDATA[Welcome to your new Jekyll blog! This is your first post.]]></summary></entry></feed>

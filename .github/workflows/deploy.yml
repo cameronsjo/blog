@@ -1,0 +1,166 @@
+name: Deploy Jekyll and Hugo Sites
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  # Jekyll deployment (for GitHub Pages)
+  deploy-jekyll:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.1'
+        bundler-cache: true
+        working-directory: './jekyll-site'
+    
+    - name: Build Jekyll site
+      run: |
+        cd jekyll-site
+        bundle exec jekyll build
+    
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./jekyll-site/_site
+        publish_branch: gh-pages
+        commit_message: 'Deploy Jekyll site'
+
+  # Hugo deployment (alternative)
+  deploy-hugo:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+        fetch-depth: 0
+    
+    - name: Setup Hugo
+      uses: peaceiris/actions-hugo@v2
+      with:
+        hugo-version: 'latest'
+        extended: true
+    
+    - name: Build Hugo site
+      run: |
+        cd hugo-site
+        hugo --minify
+    
+    - name: Deploy Hugo to Pages (Alternative)
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./hugo-site/public
+        publish_branch: hugo-pages
+        commit_message: 'Deploy Hugo site'
+
+  # Build and test both sites
+  test-builds:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+        fetch-depth: 0
+    
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.1'
+        bundler-cache: true
+        working-directory: './jekyll-site'
+    
+    - name: Setup Hugo
+      uses: peaceiris/actions-hugo@v2
+      with:
+        hugo-version: 'latest'
+        extended: true
+    
+    - name: Test Jekyll build
+      run: |
+        cd jekyll-site
+        bundle exec jekyll build --verbose
+        
+    - name: Test Hugo build
+      run: |
+        cd hugo-site
+        hugo --minify --verbose
+    
+    - name: Check for broken links (Jekyll)
+      run: |
+        cd jekyll-site
+        bundle exec htmlproofer _site --disable-external
+      continue-on-error: true
+    
+    - name: Upload Jekyll build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: jekyll-site
+        path: jekyll-site/_site/
+        retention-days: 7
+    
+    - name: Upload Hugo build artifacts  
+      uses: actions/upload-artifact@v3
+      with:
+        name: hugo-site
+        path: hugo-site/public/
+        retention-days: 7
+
+  # Performance comparison
+  performance-test:
+    runs-on: ubuntu-latest
+    needs: test-builds
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+    
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.1'
+        bundler-cache: true
+        working-directory: './jekyll-site'
+    
+    - name: Setup Hugo
+      uses: peaceiris/actions-hugo@v2
+      with:
+        hugo-version: 'latest'
+        extended: true
+    
+    - name: Benchmark Jekyll build
+      run: |
+        cd jekyll-site
+        echo "Jekyll build performance:"
+        time bundle exec jekyll build
+    
+    - name: Benchmark Hugo build
+      run: |
+        cd hugo-site  
+        echo "Hugo build performance:"
+        time hugo --minify
+    
+    - name: Compare build sizes
+      run: |
+        echo "Build size comparison:"
+        echo "Jekyll: $(du -sh jekyll-site/_site | cut -f1)"
+        echo "Hugo: $(du -sh hugo-site/public | cut -f1)"

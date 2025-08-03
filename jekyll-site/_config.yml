@@ -1,0 +1,43 @@
+title: My Blog
+email: your-email@example.com
+description: >-
+  A modern blog built with Jekyll and Hugo static site generators.
+  Write an awesome description for your new site here.
+baseurl: ""
+url: "https://username.github.io"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+# Remove theme to avoid Sass dependencies
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Permalink structure
+permalink: /:year/:month/:day/:title/
+
+# Exclude from processing
+exclude:
+  - .sass-cache/
+  - .jekyll-cache/
+  - gemfiles/
+  - Gemfile
+  - Gemfile.lock
+  - node_modules/
+  - vendor/
+
+# Collections
+collections:
+  posts:
+    output: true
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+      author: "Your Name"
