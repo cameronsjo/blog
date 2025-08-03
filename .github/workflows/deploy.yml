@@ -6,23 +6,26 @@ on:
   pull_request:
     branches: [ main, master ]
 
-# Add permissions for GitHub Actions
+# Set permissions for GitHub Pages deployment
 permissions:
   contents: read
   pages: write
   id-token: write
 
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
-  # Jekyll deployment (for GitHub Pages)
+  # Jekyll deployment (Primary - for GitHub Pages)
   deploy-jekyll:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     
-    # Add explicit permissions for this job
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
     - name: Checkout
@@ -38,27 +41,23 @@ jobs:
     - name: Build Jekyll site
       run: |
         cd jekyll-site
-        bundle exec jekyll build
+        bundle exec jekyll build --baseurl ""
+    
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+    
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./jekyll-site/_site
     
     - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v4
-      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./jekyll-site/_site
-        publish_branch: gh-pages
-        commit_message: 'Deploy Jekyll site'
+      id: deployment
+      uses: actions/deploy-pages@v4
 
-  # Hugo deployment (alternative)
-  deploy-hugo:
+  # Hugo build (for comparison and alternative deployment)
+  build-hugo:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-    
-    # Add explicit permissions for this job
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
     
     steps:
     - name: Checkout
@@ -78,14 +77,12 @@ jobs:
         cd hugo-site
         hugo --minify
     
-    - name: Deploy Hugo to Pages (Alternative)
-      uses: peaceiris/actions-gh-pages@v4
-      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    - name: Upload Hugo build artifacts
+      uses: actions/upload-artifact@v4
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./hugo-site/public
-        publish_branch: hugo-pages
-        commit_message: 'Deploy Hugo site'
+        name: hugo-site-build
+        path: hugo-site/public/
+        retention-days: 7
 
   # Build and test both sites
   test-builds:
