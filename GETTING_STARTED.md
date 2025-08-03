@@ -58,7 +58,31 @@ blog/
 
 ## 🚀 Next Steps
 
-### 1. Start Development Servers
+### Choose Your Development Approach
+
+#### Option 1: Docker (Recommended) 🐳
+
+**Zero dependency setup - eliminates all Ruby/Go installation issues:**
+
+```bash
+# Install Docker Desktop first (if not installed)
+brew install --cask docker
+
+# One command starts everything
+docker-compose up -d
+
+# Both sites will be available at:
+# Jekyll: http://localhost:4000
+# Hugo: http://localhost:1313
+```
+
+**Benefits:**
+- ✅ No Ruby version conflicts
+- ✅ No native extension compilation errors
+- ✅ Works identically on any machine
+- ✅ 2-minute setup vs 30+ minutes of troubleshooting
+
+#### Option 2: Local Development
 
 **Hugo (Already Running):**
 ```bash
@@ -66,12 +90,14 @@ blog/
 # To restart: cd hugo-site && hugo server -D
 ```
 
-**Jekyll:**
+**Jekyll (Current Working Setup):**
 ```bash
 cd jekyll-site
-bundle exec jekyll serve --livereload
+./scripts/jekyll-server.sh
 # Will run at http://localhost:4000
 ```
+
+**Note:** We've resolved Ruby 3.4+ compatibility issues by installing required gems (csv, logger, base64, bigdecimal, ostruct, psych).
 
 ### 2. Create Your First Posts
 
@@ -158,9 +184,42 @@ Both generators are set up for easy comparison:
 ## 🆘 Troubleshooting
 
 ### Jekyll Issues
+
+**Ruby Environment Problems (Common):**
+- **System Ruby conflicts**: Install Homebrew Ruby with `brew install ruby`
+- **Native extension errors** (protobuf_c, ffi_c, sassc): Use Homebrew Ruby instead of system Ruby 2.6
+- **Missing gems for Ruby 3.4+**: Add `csv`, `logger`, `base64`, `bigdecimal`, `ostruct`, `psych` to Gemfile
+- **Bundle path issues**: Use `export BUNDLE_GEMFILE="/full/path/to/Gemfile"`
 - **Gem permissions**: Use `bundle install --path vendor/bundle`
 - **Build errors**: Check `_config.yml` syntax
 - **Plugin issues**: Verify GitHub Pages plugin compatibility
+
+**Quick Ruby Environment Fix:**
+```bash
+# Install Homebrew Ruby
+brew install ruby
+
+# Add to ~/.zshrc
+echo 'export PATH="/opt/homebrew/opt/ruby/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+
+# Clean and reinstall gems
+cd jekyll-site
+rm -rf vendor/ .bundle/ Gemfile.lock
+bundle install
+```
+
+### Docker Alternative (Eliminates Ruby Issues)
+
+If you encounter any Ruby environment problems, switch to Docker:
+
+```bash
+# Install Docker Desktop
+brew install --cask docker
+
+# Start containerized environment (no Ruby installation needed)
+docker-compose up -d
+```
 
 ### Hugo Issues
 - **Build fails**: Check `config.toml` syntax

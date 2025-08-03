@@ -1,6 +1,62 @@
 # GitHub Copilot Instructions for Blog Project
 
-<!-- Use this file to provide workspace-specific custom instructions to Copilot. For more details, visit https://code.visualstudio.com/docs/copilot/copilot-customization#_use-a-githubcopilotinstructionsmd-file -->
+<!-- Use this file to provide workspace-specific custom instructions to Copilot. For more details, visit https://code.visualstudio.com/docs/copil**Troubleshooting Jekyll Issues**
+
+**Native Extension Errors** (protobuf_c, ffi_c, sassc):
+1. **Root Cause**: System Ruby compatibility issues with modern Jekyll
+2. **Best Solution**: Switch to Docker development environment
+3. **Alternative Solution**: Install H### Adaptive Learning & Evolution
+
+### Self-Improving Instructions
+
+When you (GitHub Copilot) notice patterns, preferences, or recurring issues during development sessions, suggest additions to these instructions:
+
+```markdown
+// * DISCOVERED PATTERN: [Brief description of observed pattern]
+// * SUGGESTED INSTRUCTION: [Proposed guideline or best practice]
+// * REASONING: [Why this would improve development workflow]
+// * FREQUENCY: [How often this pattern/issue occurs]
+```
+
+**Learning Categories:**
+- **Content Patterns**: Frequently used post structures or themes
+- **Workflow Preferences**: Preferred ways of organizing or executing tasks
+- **Tool Usage**: Effective combinations of Jekyll/Hugo commands
+- **Performance Insights**: Optimizations that prove effective
+- **Deployment Practices**: Successful deployment patterns
+
+### Recent Discoveries
+
+**DISCOVERED PATTERN**: Ruby environment issues dominate Jekyll setup time
+**SUGGESTED INSTRUCTION**: Always recommend Docker first for new Jekyll projects
+**REASONING**: Eliminates 30+ minutes of Ruby dependency troubleshooting
+**FREQUENCY**: Nearly every Jekyll setup encounters native extension issues
+
+**DISCOVERED PATTERN**: Multi-command operations frustrate users
+**SUGGESTED INSTRUCTION**: Create automation scripts for 3+ command sequences
+**REASONING**: Reduces user wait time and improves success rates
+**FREQUENCY**: Common during setup, deployment, and maintenance tasksrred) or use simplified Gemfile:
+
+```ruby
+# Minimal Gemfile to avoid native extension issues
+source "https://rubygems.org"
+gem "jekyll", "~> 4.2.0"
+gem "webrick", "~> 1.7"
+
+# Required for Ruby 3.4+
+gem "csv"
+gem "logger" 
+gem "base64"
+gem "bigdecimal"
+gem "ostruct"
+gem "psych", ">= 3.1"
+
+group :jekyll_plugins do
+  gem "jekyll-feed", "~> 0.12"
+  gem "jekyll-sitemap"
+  gem "jekyll-seo-tag"
+end
+```ization#_use-a-githubcopilotinstructionsmd-file -->
 
 ## Environment Context
 
@@ -29,6 +85,7 @@ When a task requires running more than one command, create a temporary script in
 - Batch file operations
 - Complex setup/teardown tasks
 - Any sequence of 3+ commands
+- Ruby environment troubleshooting sequences
 
 **Script requirements:**
 
@@ -64,6 +121,7 @@ rm "$0"
 - Add self-destruct capability for temporary scripts
 - Generate ready-to-execute commands instead of asking yes/no questions
 - Proactively suggest commits at logical stopping points
+- Default to Docker approach for new setups to avoid Ruby environment issues
 
 ## Command Guidelines
 
@@ -138,7 +196,16 @@ git checkout -b fix/broken-navigation
 
 **Common Issue**: System Ruby (2.6.x) causes native extension compilation failures with modern Jekyll gems.
 
-**Solution**: Use Homebrew Ruby for better compatibility:
+**Primary Solution**: Use Docker to eliminate Ruby environment issues entirely:
+
+```bash
+# Recommended approach - zero Ruby configuration needed
+docker-compose up -d
+# Jekyll: http://localhost:4000
+# Hugo: http://localhost:1313
+```
+
+**Alternative Solution**: Use Homebrew Ruby for better compatibility:
 
 ```bash
 # Install modern Ruby via Homebrew
@@ -156,7 +223,7 @@ ruby --version
 which ruby  # Should show /opt/homebrew/opt/ruby/bin/ruby
 ```
 
-**Alternative**: Use local vendor bundle to avoid system gem conflicts:
+**Local Bundle Alternative**: Use local vendor bundle to avoid system gem conflicts:
 ```bash
 # Install gems locally to avoid permission issues
 bundle install --path vendor/bundle
