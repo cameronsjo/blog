@@ -35,7 +35,12 @@ When you (GitHub Copilot) notice patterns, preferences, or recurring issues duri
 **DISCOVERED PATTERN**: Multi-command operations frustrate users
 **SUGGESTED INSTRUCTION**: Create automation scripts for 3+ command sequences
 **REASONING**: Reduces user wait time and improves success rates
-**FREQUENCY**: Common during setup, deployment, and maintenance tasksrred) or use simplified Gemfile:
+**FREQUENCY**: Common during setup, deployment, and maintenance tasks
+
+**DISCOVERED PATTERN**: Manual UI steps break reproducibility
+**SUGGESTED INSTRUCTION**: Always prefer CLI/API over web UI interactions
+**REASONING**: Enables automation, version control, and consistent environments
+**FREQUENCY**: Essential for professional development workflowsrred) or use simplified Gemfile:
 
 ```ruby
 # Minimal Gemfile to avoid native extension issues
@@ -123,7 +128,56 @@ rm "$0"
 - Proactively suggest commits at logical stopping points
 - Default to Docker approach for new setups to avoid Ruby environment issues
 
+### Reproducibility & Automation Guidelines
+
+**Prefer CLI over UI interactions:**
+- Always prioritize command-line interfaces and scripts over manual UI configuration
+- Use GitHub CLI (`gh`) instead of web interface when possible
+- Automate repository settings with API calls rather than manual steps
+- Create scripts for any process that requires multiple steps
+- Document CLI commands for reproducible setups
+
+**Docker for Problematic Integrations:**
+- When CLI tools have complex dependencies, use Docker containers
+- Pull official Docker images for tools with difficult local setup
+- Create docker-compose services for development environments
+- Use containers to isolate problematic dependencies (Ruby, Node.js versions)
+
+**Automation-First Approach:**
+- Every manual process should have a corresponding script
+- Include setup verification in automation scripts
+- Make scripts idempotent (safe to run multiple times)
+- Use infrastructure-as-code principles for consistent environments
+
 ## Command Guidelines
+
+### CLI-First Development Philosophy
+
+**Prioritize Scriptable Solutions:**
+```bash
+# Preferred: GitHub CLI for repository operations
+gh repo create blog --public --description "Blog with Jekyll and Hugo"
+gh api repos/owner/repo/pages --method POST --field source.branch=main
+
+# Preferred: Docker for complex tool dependencies
+docker run --rm -v $(pwd):/workspace node:18 npm install
+docker-compose up -d  # vs manual dependency installation
+
+# Preferred: Automated configuration
+git config --global user.name "Name"
+git config --global user.email "email@domain.com"
+```
+
+**Avoid Manual UI Steps:**
+```bash
+# Instead of: "Go to GitHub.com and click Settings > Pages"
+# Use: GitHub CLI or API calls for configuration
+gh api repos/$GITHUB_REPOSITORY/pages --method POST --raw-field source='{"branch":"main"}'
+
+# Instead of: "Open VS Code and install extensions"
+# Use: Automated extension installation
+code --install-extension ms-vscode.vscode-typescript-next
+```
 
 ### Use Platform-Appropriate Syntax
 
