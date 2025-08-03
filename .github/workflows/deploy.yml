@@ -6,11 +6,23 @@ on:
   pull_request:
     branches: [ main, master ]
 
+# Add permissions for GitHub Actions
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   # Jekyll deployment (for GitHub Pages)
   deploy-jekyll:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    
+    # Add explicit permissions for this job
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     
     steps:
     - name: Checkout
@@ -41,6 +53,12 @@ jobs:
   deploy-hugo:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    
+    # Add explicit permissions for this job
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     
     steps:
     - name: Checkout
