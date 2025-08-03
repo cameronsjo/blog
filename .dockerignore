@@ -1,0 +1,14 @@
+# Docker ignore patterns
+.git
+.gitignore
+README.md
+.DS_Store
+node_modules
+npm-debug.log
+.nyc_output
+.sass-cache
+_site
+.jekyll-cache
+.jekyll-metadata
+vendor/
+scripts/setup*.sh

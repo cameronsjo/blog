@@ -28,6 +28,25 @@ blog/
 
 ## Quick Start
 
+### Option 1: Docker (Recommended) 🐳
+
+**Zero dependency setup - works on any machine with Docker:**
+
+```bash
+# One-time setup
+chmod +x scripts/setup-docker.sh
+./scripts/setup-docker.sh
+
+# Or manually:
+docker-compose up -d
+```
+
+- **Jekyll**: http://localhost:4000
+- **Hugo**: http://localhost:1313
+- **Benefits**: No Ruby/Go installation needed, consistent environment, isolated dependencies
+
+### Option 2: Local Development
+
 ### Prerequisites
 
 - **Ruby** (for Jekyll) - `brew install ruby`

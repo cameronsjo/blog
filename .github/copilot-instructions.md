@@ -8,6 +8,7 @@
 - **Default Shell**: zsh
 - **Project Type**: GitHub Pages Blog with Jekyll + Hugo
 - **Build System**: Jekyll (Ruby) and Hugo (Go)
+- **Recommended Setup**: Docker containers (eliminates dependency issues)
 
 ## Project Overview
 
@@ -15,6 +16,7 @@ This workspace contains a GitHub Pages blog with dual static site generator supp
 - **Jekyll Site**: Located in `/jekyll-site/` - Primary site for GitHub Pages
 - **Hugo Site**: Located in `/hugo-site/` - Alternative/backup site generator
 - **Scripts**: Located in `/scripts/` - Build and deployment automation
+- **Docker**: Containerized development environment for consistency
 
 ## Automation Guidelines
 
@@ -326,7 +328,14 @@ summary: "Brief description"
 
 ## Development Best Practices
 
-### Local Development Workflow
+### Recommended: Docker Development Workflow
+1. Use `docker-compose up -d` for consistent environment
+2. No local Ruby/Go installation needed
+3. Isolated dependencies prevent conflicts
+4. Works identically across all machines
+5. Easy cleanup with `docker-compose down`
+
+### Alternative: Local Development Workflow
 1. Start local server for chosen generator
 2. Create content in appropriate directory
 3. Test locally before committing

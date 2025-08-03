@@ -1,0 +1,11 @@
+# Hugo Docker Container
+FROM klakegg/hugo:0.111.3-ext-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Expose Hugo port
+EXPOSE 1313
+
+# Default command
+CMD ["hugo", "server", "--bind", "0.0.0.0", "--port", "1313", "--buildDrafts", "--appendPort=false"]

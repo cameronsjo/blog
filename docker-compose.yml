@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  jekyll:
+    build:
+      context: .
+      dockerfile: Dockerfile.jekyll
+    ports:
+      - "4000:4000"
+      - "35729:35729"  # LiveReload
+    volumes:
+      - ./jekyll-site:/app
+      - jekyll_bundle:/usr/local/bundle
+    environment:
+      - JEKYLL_ENV=development
+    command: bundle exec jekyll serve --host 0.0.0.0 --port 4000 --drafts --livereload --force_polling
+    
+  hugo:
+    build:
+      context: .
+      dockerfile: Dockerfile.hugo
+    ports:
+      - "1313:1313"
+    volumes:
+      - ./hugo-site:/app
+    command: hugo server --bind 0.0.0.0 --port 1313 --buildDrafts --appendPort=false
+
+volumes:
+  jekyll_bundle:
