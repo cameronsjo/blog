@@ -5,18 +5,21 @@ import { withBase } from '../utils';
 
 interface Props {
   post: CollectionEntry<'blog'>;
+  index: number;
 }
 
-const { post } = Astro.props;
+const { post, index } = Astro.props;
 const href = withBase(`posts/${post.id}/`);
+const num = String(index + 1).padStart(2, '0');
 ---
 
-<article class="flex flex-col gap-1">
-  <h2 class="text-xl font-semibold">
-    <a href={href} style="color: var(--fg)">{post.data.title}</a>
-  </h2>
-  <p class="text-sm" style="color: var(--fg-secondary)">
-    <FormattedDate date={post.data.pubDate} />
-  </p>
-  <p style="color: var(--fg-secondary)">{post.data.description}</p>
-</article>
+<a class="entry" href={href}>
+  <span class="entry__rail">
+    <span class="entry__num">{num}</span>
+    <span class="entry__date"><FormattedDate date={post.data.pubDate} /></span>
+  </span>
+  <span class="entry__main">
+    <h2 class="entry__title">{post.data.title}</h2>
+    <span class="entry__desc">{post.data.description}</span>
+  </span>
+</a>

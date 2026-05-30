@@ -11,16 +11,16 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
 ---
 
 <BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
-  <p class="mb-10" style="color: var(--fg-secondary)">{SITE_DESCRIPTION}</p>
+  <h1 class="hero reveal" style="--i: 0">{SITE_DESCRIPTION}</h1>
   {
     posts.length > 0 ? (
-      <ul class="flex list-none flex-col gap-9 p-0">
-        {posts.map((post) => (
-          <li>
-            <PostCard post={post} />
+      <ol class="entries" role="list">
+        {posts.map((post, i) => (
+          <li class="reveal" style={`--i: ${i + 1}`}>
+            <PostCard post={post} index={i} />
           </li>
         ))}
-      </ul>
+      </ol>
     ) : (
       <p style="color: var(--fg-secondary)">No posts yet.</p>
     )

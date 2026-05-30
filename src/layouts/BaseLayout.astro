@@ -75,7 +75,8 @@ const { title, description } = Astro.props;
     </script>
   </head>
   <body>
-    <div class="mx-auto flex min-h-screen max-w-2xl flex-col px-5">
+    <div class="topline" aria-hidden="true"></div>
+    <div class="shell mx-auto flex min-h-screen max-w-2xl flex-col px-5">
       <Header />
       <main class="flex-1 py-10">
         <slot />
