@@ -1,0 +1,41 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  tags?: string[];
+}
+
+const { title, description, pubDate, updatedDate, tags = [] } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <article class="prose prose-invert max-w-none">
+    <header class="not-prose mb-8">
+      <h1 class="mb-2 text-3xl font-bold" style="color: var(--color-ink)">{title}</h1>
+      <p class="text-sm" style="color: var(--color-muted)">
+        <FormattedDate date={pubDate} />
+        {updatedDate && (<span> · updated <FormattedDate date={updatedDate} /></span>)}
+      </p>
+      {
+        tags.length > 0 && (
+          <ul class="mt-3 flex flex-wrap gap-2 p-0">
+            {tags.map((tag) => (
+              <li
+                class="list-none rounded px-2 py-0.5 text-xs"
+                style="background: var(--color-surface); color: var(--color-muted)"
+              >
+                {tag}
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </header>
+    <slot />
+  </article>
+</BaseLayout>

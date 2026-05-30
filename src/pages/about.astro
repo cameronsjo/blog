@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { GITHUB_URL } from '../consts';
+---
+
+<BaseLayout
+  title="About"
+  description="Cameron Sjo — Principal Software Engineer working in AI security."
+>
+  <div class="prose prose-invert max-w-none">
+    <h1>About</h1>
+    <p>
+      I'm Cameron Sjo — a Principal Software Engineer working in AI security.
+      My day job is threat modeling for LLM-based systems: guardrails,
+      secure-by-design practices, and the policies that keep them honest.
+    </p>
+    <p>
+      This is where I write about the rest of it — the building and the tuning.
+      I tend toward self-hosted, privacy-first tools I understand well enough to
+      rebuild, and I care more about how a system <em>feels</em> to use than how
+      it benchmarks.
+    </p>
+    <p>
+      Find the code on <a href={GITHUB_URL}>GitHub</a>.
+    </p>
+  </div>
+</BaseLayout>

@@ -1,0 +1,35 @@
+---
+import { SITE_TITLE } from '../consts';
+import { withBase } from '../utils';
+
+const path = Astro.url.pathname.replace(/\/$/, '');
+const nav = [
+  { href: withBase(''), label: 'Home' },
+  { href: withBase('about'), label: 'About' },
+];
+---
+
+<header
+  class="flex items-center justify-between border-b py-5"
+  style="border-color: var(--color-border)"
+>
+  <a href={withBase('')} class="text-lg font-bold" style="color: var(--color-ink)">
+    {SITE_TITLE}
+  </a>
+  <nav class="flex gap-5 text-sm">
+    {
+      nav.map((item) => {
+        const active = path === item.href.replace(/\/$/, '');
+        return (
+          <a
+            href={item.href}
+            aria-current={active ? 'page' : undefined}
+            style={active ? 'color: var(--color-ink)' : 'color: var(--color-muted)'}
+          >
+            {item.label}
+          </a>
+        );
+      })
+    }
+  </nav>
+</header>

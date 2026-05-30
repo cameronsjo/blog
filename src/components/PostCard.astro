@@ -1,0 +1,22 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import FormattedDate from './FormattedDate.astro';
+import { withBase } from '../utils';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const href = withBase(`posts/${post.id}/`);
+---
+
+<article class="flex flex-col gap-1">
+  <h2 class="text-xl font-semibold">
+    <a href={href} style="color: var(--color-ink)">{post.data.title}</a>
+  </h2>
+  <p class="text-sm" style="color: var(--color-muted)">
+    <FormattedDate date={post.data.pubDate} />
+  </p>
+  <p style="color: var(--color-muted)">{post.data.description}</p>
+</article>

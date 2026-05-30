@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+
+// Astro's collection order is non-deterministic — sort explicitly, newest first.
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+);
+---
+
+<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+  <p class="mb-10" style="color: var(--color-muted)">{SITE_DESCRIPTION}</p>
+  {
+    posts.length > 0 ? (
+      <ul class="flex list-none flex-col gap-9 p-0">
+        {posts.map((post) => (
+          <li>
+            <PostCard post={post} />
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p style="color: var(--color-muted)">No posts yet.</p>
+    )
+  }
+</BaseLayout>
