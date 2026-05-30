@@ -48,9 +48,9 @@ mode (toggle in the header, persisted to `localStorage`), mono headlines over a
 humanist-sans body, gold accent. Post titles are JetBrains Mono; body is iA
 Writer Quattro S.
 
-Two opt-in whimsy moments (the Artificer `ultrathink` shimmer): the `blog.`
-wordmark ignites on hover/focus, and each post ends with a flowing rainbow
-rule. Both honor `prefers-reduced-motion` (flow stops, burnished gradient stays).
+The `blog.` wordmark carries the Artificer `ultrathink` shimmer (brand-palette
+gradient, flowing). It honors `prefers-reduced-motion` — the flow stops, the
+burnished gradient stays.
 
 ## Deploy
 
