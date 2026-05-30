@@ -11,7 +11,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
 ---
 
 <BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
-  <p class="mb-10" style="color: var(--color-muted)">{SITE_DESCRIPTION}</p>
+  <p class="mb-10" style="color: var(--fg-secondary)">{SITE_DESCRIPTION}</p>
   {
     posts.length > 0 ? (
       <ul class="flex list-none flex-col gap-9 p-0">
@@ -22,7 +22,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
         ))}
       </ul>
     ) : (
-      <p style="color: var(--color-muted)">No posts yet.</p>
+      <p style="color: var(--fg-secondary)">No posts yet.</p>
     )
   }
 </BaseLayout>

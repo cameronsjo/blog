@@ -16,6 +16,59 @@ const { title, description } = Astro.props;
 <html lang="en">
   <head>
     <BaseHead title={title} description={description} />
+    {/* Theme: applied pre-paint (no FOUC), shared with the rest of the
+        Artificer system via the `artificer.theme` localStorage key. */}
+    <script is:inline>
+      (function () {
+        var KEY = 'artificer.theme';
+        function current() {
+          return (
+            document.documentElement.getAttribute('data-theme') ||
+            (window.matchMedia('(prefers-color-scheme: light)').matches
+              ? 'light'
+              : 'dark')
+          );
+        }
+        try {
+          var stored = localStorage.getItem(KEY);
+          if (stored === 'light' || stored === 'dark') {
+            document.documentElement.setAttribute('data-theme', stored);
+          }
+        } catch (e) {}
+
+        function apply(next) {
+          document.documentElement.setAttribute('data-theme', next);
+          try {
+            localStorage.setItem(KEY, next);
+          } catch (e) {}
+          document.querySelectorAll('[data-theme-label]').forEach(function (l) {
+            l.textContent = next === 'light' ? 'Light' : 'Dark';
+          });
+        }
+
+        function bind() {
+          var init = current();
+          document.querySelectorAll('[data-theme-label]').forEach(function (l) {
+            l.textContent = init === 'light' ? 'Light' : 'Dark';
+          });
+          document
+            .querySelectorAll('[data-theme-toggle]')
+            .forEach(function (b) {
+              if (b.dataset.themeBound === '1') return;
+              b.dataset.themeBound = '1';
+              b.addEventListener('click', function () {
+                apply(current() === 'light' ? 'dark' : 'light');
+              });
+            });
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', bind);
+        } else {
+          bind();
+        }
+      })();
+    </script>
   </head>
   <body>
     <div class="mx-auto flex min-h-screen max-w-2xl flex-col px-5">

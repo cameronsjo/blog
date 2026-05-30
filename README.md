@@ -39,7 +39,13 @@ The filename (minus extension) becomes the URL slug: `/blog/posts/<slug>`.
 | `src/pages/` | Routes — index, about, posts, `rss.xml` |
 | `src/layouts/` | `BaseLayout`, `PostLayout` |
 | `src/components/` | Head/SEO, header, footer, post card |
-| `src/styles/global.css` | Tailwind v4 + dark-first theme tokens |
+| `src/styles/global.css` | Tailwind v4 + [Artificer](https://github.com/cameronsjo) design tokens |
+| `src/fonts/` | Self-hosted iA Writer Quattro S + JetBrains Mono (WOFF2) |
+
+Styling follows the Artificer design system — dark-default with a paper light
+mode (toggle in the header, persisted to `localStorage`), mono headlines over a
+humanist-sans body, gold accent. Post titles are JetBrains Mono; body is iA
+Writer Quattro S.
 
 ## Deploy
 

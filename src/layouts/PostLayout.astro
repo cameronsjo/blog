@@ -14,10 +14,10 @@ const { title, description, pubDate, updatedDate, tags = [] } = Astro.props;
 ---
 
 <BaseLayout title={title} description={description}>
-  <article class="prose prose-invert max-w-none">
+  <article class="prose max-w-none">
     <header class="not-prose mb-8">
-      <h1 class="mb-2 text-3xl font-bold" style="color: var(--color-ink)">{title}</h1>
-      <p class="text-sm" style="color: var(--color-muted)">
+      <h1 class="mb-2 text-3xl font-bold" style="color: var(--fg)">{title}</h1>
+      <p class="text-sm" style="color: var(--fg-secondary)">
         <FormattedDate date={pubDate} />
         {updatedDate && (<span> · updated <FormattedDate date={updatedDate} /></span>)}
       </p>
@@ -27,7 +27,7 @@ const { title, description, pubDate, updatedDate, tags = [] } = Astro.props;
             {tags.map((tag) => (
               <li
                 class="list-none rounded px-2 py-0.5 text-xs"
-                style="background: var(--color-surface); color: var(--color-muted)"
+                style="background: var(--bg-raised); color: var(--fg-secondary)"
               >
                 {tag}
               </li>
