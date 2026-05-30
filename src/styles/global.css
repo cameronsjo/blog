@@ -299,6 +299,9 @@ body::before {
 /* ── Editorial index entries — asymmetric number/date rail | title/desc ── */
 .entries {
   border-bottom: 1px solid var(--border);
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 .entry {
   display: grid;
@@ -340,6 +343,7 @@ body::before {
   min-width: 0;
 }
 .entry__title {
+  margin: 0;
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: clamp(1.15rem, 2.6vw, 1.4rem);
@@ -354,7 +358,9 @@ body::before {
   font-size: 0.95rem;
 }
 .entry:hover .entry__title,
-.entry:hover .entry__num {
+.entry:hover .entry__num,
+.entry:focus-visible .entry__title,
+.entry:focus-visible .entry__num {
   color: var(--accent);
 }
 

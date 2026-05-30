@@ -14,13 +14,13 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
   <h1 class="hero reveal" style="--i: 0">{SITE_DESCRIPTION}</h1>
   {
     posts.length > 0 ? (
-      <section class="entries">
+      <ol class="entries" role="list">
         {posts.map((post, i) => (
-          <div class="reveal" style={`--i: ${i + 1}`}>
+          <li class="reveal" style={`--i: ${i + 1}`}>
             <PostCard post={post} index={i} />
-          </div>
+          </li>
         ))}
-      </section>
+      </ol>
     ) : (
       <p style="color: var(--fg-secondary)">No posts yet.</p>
     )
