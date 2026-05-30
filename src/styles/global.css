@@ -212,3 +212,169 @@ code, pre, kbd {
   border-radius: var(--radius-sm);
   font-weight: 400;
 }
+/* Prose links: animated underline that draws in on hover (state, not arrival). */
+.prose :where(a):not(:where([class~="not-prose"] *)) {
+  text-decoration: none;
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size var(--dur-fast) var(--ease);
+}
+.prose :where(a):hover:not(:where([class~="not-prose"] *)) {
+  background-size: 100% 1px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   frontend-design pass — editorial broadsheet meets terminal.
+   Artificer DNA kept (palette, fonts, dark+paper); craft pushed:
+   paper grain, brand top-rule, one page-load reveal, asymmetric index.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root { --grain-opacity: 0.028; }
+:root[data-theme="light"] { --grain-opacity: 0.05; }
+
+/* Selection — gold fill, a small signature detail. */
+::selection {
+  background: var(--accent-fill);
+  color: var(--on-accent);
+}
+
+/* Paper grain — faint fractal-noise texture for atmosphere. Static; reads as
+   paper tooth in light mode, film grain in dark. Sits below content. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Brand top-rule — gold → purple hairline (Cameron's signature pairing). */
+.topline {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 2px;
+  z-index: 50;
+  background: linear-gradient(90deg, var(--accent), var(--brand-purple));
+}
+
+/* Content sits above the grain. */
+.shell {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── One orchestrated page-load reveal (staggered) ─────────────────────── */
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+.reveal {
+  animation: reveal 600ms var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 80ms);
+}
+/* Reduced-motion: no motion AND no delayed-invisibility — render as-is. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal { animation: none !important; }
+}
+
+/* ── Index lede — a quiet subtitle under the `blog.` wordmark, not a second
+   headline. Mono, medium weight, secondary ink, comfortable measure. ──── */
+.hero {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  word-spacing: normal;
+  color: var(--fg-secondary);
+  max-width: 38ch;
+  margin: var(--s-sm) 0 var(--s-2xl);
+  text-wrap: balance;
+}
+
+/* ── Editorial index entries — asymmetric number/date rail | title/desc ── */
+.entries {
+  border-bottom: 1px solid var(--border);
+}
+.entry {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  gap: var(--s-lg);
+  padding: var(--s-lg) 0;
+  border-top: 1px solid var(--border);
+  text-decoration: none;
+  color: var(--fg);
+  transition: transform var(--dur-fast) var(--ease);
+}
+.entry:hover {
+  transform: translateX(6px);
+  text-decoration: none;
+}
+.entry__rail {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-top: 5px;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  word-spacing: normal;
+}
+.entry__num {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--steel);
+  transition: color var(--dur-fast) var(--ease);
+}
+.entry__date {
+  font-size: 12px;
+  color: var(--fg-secondary);
+}
+.entry__main {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.entry__title {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: clamp(1.15rem, 2.6vw, 1.4rem);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  word-spacing: normal;
+  color: var(--fg);
+  transition: color var(--dur-fast) var(--ease);
+}
+.entry__desc {
+  color: var(--fg-secondary);
+  font-size: 0.95rem;
+}
+.entry:hover .entry__title,
+.entry:hover .entry__num {
+  color: var(--accent);
+}
+
+/* ── Dramatic post title ───────────────────────────────────────────────── */
+.post-title {
+  font-size: clamp(1.85rem, 5.5vw, 2.85rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  word-spacing: normal;
+  text-wrap: balance;
+}
+
+@media (max-width: 640px) {
+  .entry {
+    grid-template-columns: 1fr;
+    gap: var(--s-sm);
+  }
+  .entry__rail {
+    flex-direction: row;
+    gap: var(--s-md);
+    padding-top: 0;
+  }
+}
