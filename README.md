@@ -41,11 +41,16 @@ The filename (minus extension) becomes the URL slug: `/blog/posts/<slug>`.
 | `src/components/` | Head/SEO, header, footer, post card |
 | `src/styles/global.css` | Tailwind v4 + [Artificer](https://github.com/cameronsjo) design tokens |
 | `src/fonts/` | Self-hosted iA Writer Quattro S + JetBrains Mono (WOFF2) |
+| `src/styles/whimsy.css` | Artificer whimsy layer (vendored from `feat/whimsy-v0.8.0`, pre-release) |
 
 Styling follows the Artificer design system — dark-default with a paper light
 mode (toggle in the header, persisted to `localStorage`), mono headlines over a
 humanist-sans body, gold accent. Post titles are JetBrains Mono; body is iA
 Writer Quattro S.
+
+Two opt-in whimsy moments (the Artificer `ultrathink` shimmer): the `blog.`
+wordmark ignites on hover/focus, and each post ends with a flowing rainbow
+rule. Both honor `prefers-reduced-motion` (flow stops, burnished gradient stays).
 
 ## Deploy
 

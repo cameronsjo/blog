@@ -3,6 +3,7 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
+import '../styles/whimsy.css';
 
 interface Props {
   title: string;
@@ -29,12 +30,15 @@ const { title, description } = Astro.props;
               : 'dark')
           );
         }
+        // Always set an explicit data-theme (default dark) so theme-dependent
+        // CSS — including the whimsy layer — never falls into ambiguous
+        // :not([data-theme]) / prefers-color-scheme branches.
+        var initial = 'dark';
         try {
           var stored = localStorage.getItem(KEY);
-          if (stored === 'light' || stored === 'dark') {
-            document.documentElement.setAttribute('data-theme', stored);
-          }
+          if (stored === 'light' || stored === 'dark') initial = stored;
         } catch (e) {}
+        document.documentElement.setAttribute('data-theme', initial);
 
         function apply(next) {
           document.documentElement.setAttribute('data-theme', next);

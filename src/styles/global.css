@@ -69,6 +69,10 @@
   --steel: #b8cad4;         /* meta / paths / chrome */
   --brand-purple: #5a3a9a;  /* wordmark only — decorative, never semantic */
 
+  /* Needed by the whimsy brand gradient (full Artificer palette). */
+  --attention: #c4808a;     /* dusty rose */
+  --success: #4a8a5e;       /* apothecary green */
+
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
@@ -103,6 +107,9 @@
 
   --steel: #2e4a5a;
   --brand-purple: #4a25a0;
+
+  --attention: #8a6618;
+  --success: #2a5a3a;
 
   color-scheme: light;
 }
@@ -147,6 +154,15 @@ a:hover {
   color: var(--accent-bright);
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+/* Wordmark sits at --fg (not the gold link color) until whimsy ignites it.
+   whimsy.css is imported after this file, so .whimsy wins on hover. */
+.wordmark {
+  color: var(--fg);
+}
+.wordmark:hover {
+  text-decoration: none;
 }
 
 code, pre, kbd {

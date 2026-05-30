@@ -1,5 +1,5 @@
 ---
-import { SITE_TITLE } from '../consts';
+import { SITE_WORDMARK } from '../consts';
 import { withBase } from '../utils';
 
 const path = Astro.url.pathname.replace(/\/$/, '');
@@ -15,10 +15,10 @@ const nav = [
 >
   <a
     href={withBase('')}
-    class="font-mono text-lg font-bold"
-    style="color: var(--fg)"
+    class="wordmark whimsy--brand font-mono text-lg font-bold"
+    data-wordmark
   >
-    {SITE_TITLE}
+    {SITE_WORDMARK}
   </a>
   <nav class="flex items-center gap-5 text-sm">
     {
@@ -74,3 +74,18 @@ const nav = [
     background: var(--accent);
   }
 </style>
+
+<script>
+  // Whimsy: ignite the brand shimmer on the wordmark only while hovered or
+  // focused — opt-in, one transient moment, never automatic. Keyboard users
+  // get it via focus, not just hover.
+  const wm = document.querySelector('[data-wordmark]');
+  if (wm) {
+    const on = () => wm.classList.add('whimsy');
+    const off = () => wm.classList.remove('whimsy');
+    wm.addEventListener('mouseenter', on);
+    wm.addEventListener('mouseleave', off);
+    wm.addEventListener('focus', on);
+    wm.addEventListener('blur', off);
+  }
+</script>
