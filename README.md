@@ -78,12 +78,12 @@ the domain, remove `base`, and add `public/CNAME`.
 
 ### Analytics
 
-Cloudflare Web Analytics uses a cookieless beacon read from the
-`PUBLIC_CF_BEACON_TOKEN` build variable. To enable: Cloudflare dashboard →
-**Web Analytics → Add a site** → enter the GitHub Pages URL → copy the token →
-add it as a GitHub Actions repo **variable** (Settings → Secrets and variables →
-Actions → Variables) named `PUBLIC_CF_BEACON_TOKEN`. With no token set, the
-beacon tag is omitted (clean local dev). The token is public/write-only.
+Cloudflare Web Analytics uses a cookieless beacon, hardcoded in
+`BaseLayout.astro` (`CF_BEACON_TOKEN`). The token is public/write-only. Because
+CF Web Analytics aggregates **by hostname**, one CF site/token for
+`cameronsjo.github.io` covers this blog, the root site, and
+`/agentic-harnesses` — the same token is reused across all three repos and the
+stats are filterable by path.
 
 ## License
 

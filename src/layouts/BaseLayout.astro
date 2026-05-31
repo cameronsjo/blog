@@ -17,13 +17,12 @@ interface Props {
 
 const { title, description, pubDate, updatedDate, ogImage, tags } = Astro.props;
 
-// Cloudflare Web Analytics — cookieless manual beacon. Works on plain GitHub
-// Pages today; token is public/write-only, supplied as the PUBLIC_CF_BEACON_TOKEN
-// build var. Missing token → tag omitted (clean local dev).
-// No Subresource Integrity hash: Cloudflare serves beacon.min.js as a mutable,
-// unversioned file with no published hash, so an `integrity` pin would break
-// analytics on their next update. This is the documented SRI exception.
-const cfBeaconToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN;
+// Cloudflare Web Analytics — cookieless manual beacon. One CF site/token for
+// cameronsjo.github.io covers the root, /blog, and /agentic-harnesses (CF Web
+// Analytics aggregates by hostname). Token is public/write-only; no SRI hash
+// because Cloudflare serves beacon.min.js mutable/unversioned with no published
+// hash — an `integrity` pin would break on their next update.
+const CF_BEACON_TOKEN = '9db7302de886402680e0838d0f35f7db';
 ---
 
 <!doctype html>
@@ -115,15 +114,11 @@ const cfBeaconToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN;
       </main>
       <Footer />
     </div>
-    {
-      cfBeaconToken && (
-        <script
-          is:inline
-          defer
-          src="https://static.cloudflareinsights.com/beacon.min.js"
-          data-cf-beacon={`{"token":"${cfBeaconToken}"}`}
-        />
-      )
-    }
+    <script
+      is:inline
+      defer
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon={`{"token":"${CF_BEACON_TOKEN}"}`}
+    />
   </body>
 </html>
