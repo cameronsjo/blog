@@ -9,15 +9,34 @@ import '../styles/whimsy.css';
 interface Props {
   title: string;
   description: string;
+  pubDate?: Date;
+  updatedDate?: Date;
+  ogImage?: string;
+  tags?: string[];
 }
 
-const { title, description } = Astro.props;
+const { title, description, pubDate, updatedDate, ogImage, tags } = Astro.props;
+
+// Cloudflare Web Analytics — cookieless manual beacon. Works on plain GitHub
+// Pages today; token is public/write-only, supplied as the PUBLIC_CF_BEACON_TOKEN
+// build var. Missing token → tag omitted (clean local dev).
+// No Subresource Integrity hash: Cloudflare serves beacon.min.js as a mutable,
+// unversioned file with no published hash, so an `integrity` pin would break
+// analytics on their next update. This is the documented SRI exception.
+const cfBeaconToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead title={title} description={description} />
+    <BaseHead
+      title={title}
+      description={description}
+      pubDate={pubDate}
+      updatedDate={updatedDate}
+      ogImage={ogImage}
+      tags={tags}
+    />
     <ClientRouter />
     {/* Theme: applied pre-paint (no FOUC), shared with the rest of the
         Artificer system via the `artificer.theme` localStorage key. */}
@@ -91,5 +110,15 @@ const { title, description } = Astro.props;
       </main>
       <Footer />
     </div>
+    {
+      cfBeaconToken && (
+        <script
+          is:inline
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon={`{"token":"${cfBeaconToken}"}`}
+        />
+      )
+    }
   </body>
 </html>

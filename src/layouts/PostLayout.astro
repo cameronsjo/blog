@@ -8,12 +8,20 @@ interface Props {
   pubDate: Date;
   updatedDate?: Date;
   tags?: string[];
+  ogImage?: string;
 }
 
-const { title, description, pubDate, updatedDate, tags = [] } = Astro.props;
+const { title, description, pubDate, updatedDate, tags = [], ogImage } = Astro.props;
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout
+  title={title}
+  description={description}
+  pubDate={pubDate}
+  updatedDate={updatedDate}
+  ogImage={ogImage}
+  tags={tags}
+>
   <article class="prose max-w-none">
     <header class="not-prose reveal mb-10" style="--i: 0">
       <h1 class="post-title mb-3 font-bold" style="color: var(--fg)">{title}</h1>
