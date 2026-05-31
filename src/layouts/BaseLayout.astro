@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -17,6 +18,7 @@ const { title, description } = Astro.props;
 <html lang="en">
   <head>
     <BaseHead title={title} description={description} />
+    <ClientRouter />
     {/* Theme: applied pre-paint (no FOUC), shared with the rest of the
         Artificer system via the `artificer.theme` localStorage key. */}
     <script is:inline>
@@ -71,6 +73,12 @@ const { title, description } = Astro.props;
         } else {
           bind();
         }
+        // View Transitions swap <body> without re-firing DOMContentLoaded, so
+        // the replaced toggle buttons arrive unbound. Rebind after every swap;
+        // bind() is idempotent via the data-themeBound guard, so the overlap
+        // with the initial call above is harmless. <html> persists across
+        // swaps, so data-theme carries over with no flash.
+        document.addEventListener('astro:page-load', bind);
       })();
     </script>
   </head>
