@@ -22,7 +22,7 @@ pages.default = { title: SITE_TITLE, description: SITE_DESCRIPTION };
 // brand without them.
 type RGB = [number, number, number];
 const GOLD: RGB = [219, 187, 111]; // --accent #dbbb6f
-const OFF_WHITE: RGB = [216, 214, 209]; // --fg #e8e6e1
+const OFF_WHITE: RGB = [232, 230, 225]; // --fg #e8e6e1
 const INDIGO: RGB = [32, 32, 62]; // --fg light-theme ink #20203e, used as the field
 const INDIGO_DEEP: RGB = [20, 20, 40];
 

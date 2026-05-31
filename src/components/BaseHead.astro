@@ -95,4 +95,4 @@ const jsonLd = isPost
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={ogImageURL} />
 
-<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} is:inline />

@@ -30,7 +30,7 @@ const tags = post.data.tags;
     <ul class="entry__tags">
       {tags.map((tag) => (
         <li>
-          <a class="entry__tag" href={withBase(`tags/${tag}/`)}>
+          <a class="entry__tag" href={withBase(`tags/${encodeURIComponent(tag)}/`)}>
             #{tag}
           </a>
         </li>

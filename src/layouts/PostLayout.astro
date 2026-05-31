@@ -55,7 +55,7 @@ const {
               <li class="list-none">
                 <a
                   class="tag-chip rounded px-2 py-0.5 text-xs"
-                  href={withBase(`tags/${tag}/`)}
+                  href={withBase(`tags/${encodeURIComponent(tag)}/`)}
                 >
                   {tag}
                 </a>

@@ -25,7 +25,7 @@ const tags = [...counts.entries()].sort(
       <ul class="tag-cloud reveal" style="--i: 1" role="list">
         {tags.map(([tag, count]) => (
           <li>
-            <a class="tag-cloud__chip" href={withBase(`tags/${tag}/`)}>
+            <a class="tag-cloud__chip" href={withBase(`tags/${encodeURIComponent(tag)}/`)}>
               <span class="tag-cloud__name">#{tag}</span>
               <span class="tag-cloud__count">{count}</span>
             </a>
