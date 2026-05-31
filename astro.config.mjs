@@ -9,6 +9,7 @@ import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+import pagefind from 'astro-pagefind';
 import { remarkReadingTime } from './src/plugins/remark-reading-time.mjs';
 
 // Map of post slug → ISO lastmod (updatedDate, else pubDate), read straight from
@@ -86,6 +87,9 @@ export default defineConfig({
         return item;
       },
     }),
+    // Indexes the built HTML on astro:build:done — search is CI-automatic, no
+    // extra workflow step. The component reads the bundle from BASE_URL/pagefind/.
+    pagefind(),
   ],
   markdown: {
     remarkPlugins: [remarkReadingTime],
