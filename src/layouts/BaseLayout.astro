@@ -58,14 +58,19 @@ const cfBeaconToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN;
         try {
           var stored = localStorage.getItem(KEY);
           if (stored === 'light' || stored === 'dark') initial = stored;
-        } catch (e) {}
+        } catch (e) {
+          /* localStorage blocked (private mode / disabled) — keep the dark
+             default already in `initial`; nothing actionable to log pre-paint. */
+        }
         document.documentElement.setAttribute('data-theme', initial);
 
         function apply(next) {
           document.documentElement.setAttribute('data-theme', next);
           try {
             localStorage.setItem(KEY, next);
-          } catch (e) {}
+          } catch (e) {
+            /* Persist is best-effort; the in-DOM data-theme still updates. */
+          }
           document.querySelectorAll('[data-theme-label]').forEach(function (l) {
             l.textContent = next === 'light' ? 'Light' : 'Dark';
           });

@@ -15,25 +15,34 @@ const pages: Record<string, { title: string; description: string }> = Object.fro
 );
 pages.default = { title: SITE_TITLE, description: SITE_DESCRIPTION };
 
-// Brand palette (mirrors src/styles/global.css): indigo field, burnished-gold
-// rail + title. Fonts are left as the library default — the site ships woff2,
-// which CanvasKit's FreeType backend can't decompress, so passing them would
-// risk the build. The palette carries the brand without them.
+// Brand palette (mirrors src/styles/global.css) as named constants so the card
+// and the stylesheet share one source of truth. Fonts are left as the library
+// default — the site ships woff2, which CanvasKit's FreeType backend can't
+// decompress, so passing them would risk the build. The palette carries the
+// brand without them.
+type RGB = [number, number, number];
+const GOLD: RGB = [219, 187, 111]; // --accent #dbbb6f
+const OFF_WHITE: RGB = [216, 214, 209]; // --fg #e8e6e1
+const INDIGO: RGB = [32, 32, 62]; // --fg light-theme ink #20203e, used as the field
+const INDIGO_DEEP: RGB = [20, 20, 40];
+
+const TITLE_SIZE = 64;
+const DESCRIPTION_SIZE = 30;
+const RAIL_WIDTH = 12;
+const PADDING = 60;
+
 export const { getStaticPaths, GET } = await OGImageRoute({
   param: 'slug',
   pages,
   getImageOptions: (_path, page) => ({
     title: page.title,
     description: page.description,
-    bgGradient: [
-      [32, 32, 62], // --fg light-theme ink, used here as an indigo field
-      [20, 20, 40],
-    ],
-    border: { color: [219, 187, 111], width: 12, side: 'inline-start' }, // gold rail
-    padding: 60,
+    bgGradient: [INDIGO, INDIGO_DEEP],
+    border: { color: GOLD, width: RAIL_WIDTH, side: 'inline-start' },
+    padding: PADDING,
     font: {
-      title: { color: [219, 187, 111], size: 64, weight: 'Bold', lineHeight: 1.15 }, // gold
-      description: { color: [216, 214, 209], size: 30, weight: 'Normal', lineHeight: 1.4 },
+      title: { color: GOLD, size: TITLE_SIZE, weight: 'Bold', lineHeight: 1.15 },
+      description: { color: OFF_WHITE, size: DESCRIPTION_SIZE, weight: 'Normal', lineHeight: 1.4 },
     },
   }),
 });

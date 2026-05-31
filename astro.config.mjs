@@ -27,7 +27,12 @@ function blogLastmodBySlug() {
     const pub = frontmatter.match(/^pubDate:\s*(.+)$/m)?.[1];
     const updated = frontmatter.match(/^updatedDate:\s*(.+)$/m)?.[1];
     const date = (updated ?? pub ?? '').trim().replace(/['"]/g, '');
-    if (date) map[file.replace(/\.(md|mdx)$/, '')] = new Date(date).toISOString();
+    if (!date) continue;
+    const parsed = new Date(date);
+    // Skip malformed dates rather than let .toISOString() throw and fail the
+    // build here; the Zod schema validates dates authoritatively at load.
+    if (Number.isNaN(parsed.getTime())) continue;
+    map[file.replace(/\.(md|mdx)$/, '')] = parsed.toISOString();
   }
   return map;
 }
