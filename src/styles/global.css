@@ -373,6 +373,28 @@ body::before {
   text-wrap: balance;
 }
 
+/* ── Heading anchor links (rehype-autolink-headings) ───────────────────── */
+.prose :is(h2, h3, h4) {
+  position: relative;
+}
+.heading-anchor {
+  margin-left: 0.4rem;
+  color: var(--fg-disabled);
+  font-weight: 400;
+  text-decoration: none;
+  opacity: 0;
+  transition:
+    opacity var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+.prose :is(h2, h3, h4):hover .heading-anchor,
+.heading-anchor:focus-visible {
+  opacity: 1;
+}
+.heading-anchor:hover {
+  color: var(--accent);
+}
+
 @media (max-width: 640px) {
   .entry {
     grid-template-columns: 1fr;

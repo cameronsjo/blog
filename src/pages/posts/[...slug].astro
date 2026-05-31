@@ -14,11 +14,18 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const { Content } = await render(post);
-// OG card is generated at /og/<id>.png by src/pages/og/[...slug].png.ts.
+// render() also returns the heading tree (for the TOC) and the frontmatter our
+// remark plugin augmented (minutesRead).
+const { Content, headings, remarkPluginFrontmatter } = await render(post);
+// OG card is generated at /og/<id>.png by src/pages/og/[...slug].ts.
 const ogImage = `og/${post.id}.png`;
 ---
 
-<PostLayout {...post.data} ogImage={ogImage}>
+<PostLayout
+  {...post.data}
+  ogImage={ogImage}
+  headings={headings}
+  minutesRead={remarkPluginFrontmatter.minutesRead}
+>
   <Content />
 </PostLayout>

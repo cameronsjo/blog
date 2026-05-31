@@ -7,6 +7,9 @@ import expressiveCode from 'astro-expressive-code';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
+import rehypeSlug from 'rehype-slug';
+import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+import { remarkReadingTime } from './src/plugins/remark-reading-time.mjs';
 
 // Map of post slug → ISO lastmod (updatedDate, else pubDate), read straight from
 // the content frontmatter at config load. astro:content isn't available here, so
@@ -84,6 +87,20 @@ export default defineConfig({
       },
     }),
   ],
+  markdown: {
+    remarkPlugins: [remarkReadingTime],
+    rehypePlugins: [
+      rehypeSlug,
+      [
+        rehypeAutolinkHeadings,
+        {
+          behavior: 'append',
+          properties: { className: ['heading-anchor'], ariaHidden: true, tabIndex: -1 },
+          content: { type: 'text', value: '#' },
+        },
+      ],
+    ],
+  },
   vite: {
     plugins: [tailwindcss()],
   },

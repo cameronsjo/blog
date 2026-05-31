@@ -1,0 +1,64 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+const { headings } = Astro.props;
+// h2/h3 only — h1 is the post title, h4+ is too granular for a sidebar TOC.
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+{
+  toc.length > 1 && (
+    <nav class="toc not-prose" aria-label="Table of contents">
+      <p class="toc__label">On this page</p>
+      <ul class="toc__list">
+        {toc.map((h) => (
+          <li class:list={['toc__item', { 'toc__item--sub': h.depth === 3 }]}>
+            <a href={`#${h.slug}`}>{h.text}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<style>
+  .toc {
+    margin-bottom: var(--s-lg, 2rem);
+    padding: var(--s-sm, 0.75rem) var(--s-md, 1rem);
+    border-left: 2px solid var(--border);
+    background: var(--bg-raised);
+    border-radius: var(--radius-sm);
+  }
+  .toc__label {
+    margin: 0 0 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg-secondary);
+  }
+  .toc__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .toc__item {
+    line-height: 1.5;
+  }
+  .toc__item--sub {
+    padding-left: 1rem;
+  }
+  .toc__item a {
+    color: var(--fg-secondary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .toc__item a:hover {
+    color: var(--accent);
+  }
+</style>

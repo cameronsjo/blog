@@ -1,0 +1,41 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { withBase } from '../../utils';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
+
+  return tags.map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      posts: posts
+        .filter((post) => post.data.tags.includes(tag))
+        .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()),
+    },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+const count = posts.length;
+---
+
+<BaseLayout
+  title={`#${tag}`}
+  description={`${count} post${count === 1 ? '' : 's'} tagged ${tag}.`}
+>
+  <p class="reveal" style="--i: 0; color: var(--fg-secondary)">
+    <a href={withBase('tags/')} style="color: var(--accent)">Tags</a> /
+  </p>
+  <h1 class="hero reveal" style="--i: 1">#{tag}</h1>
+  <ol class="entries reveal" style="--i: 2" role="list">
+    {posts.map((post, i) => (
+      <li>
+        <PostCard post={post} index={i} />
+      </li>
+    ))}
+  </ol>
+</BaseLayout>
