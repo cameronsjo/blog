@@ -48,9 +48,12 @@
 }
 
 /* ── Artificer semantic tokens · DARK (default) ──────────────────────────
-   v0.6 palette (apothecary × deco × speakeasy). Hex values mirror the
-   design-system source; do not substitute without re-checking AAA contrast. */
+   v0.6 palette (apothecary × deco × speakeasy), current as of Artificer
+   v0.10.1 (--art-version above) — these hex values are unchanged v0.6→0.10.1;
+   only roles/contracts and additive tokens moved. Mirror of the design-system
+   source; do not substitute without re-checking AAA contrast. */
 :root {
+  --art-version: "0.10.1";   /* Artificer provenance — see UPGRADE.md */
   --bg: #292c33;
   --bg-raised: #313540;
   --bg-overlay: #3c4150;
