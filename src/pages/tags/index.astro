@@ -1,0 +1,75 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE_TITLE } from '../../consts';
+import { withBase } from '../../utils';
+
+const posts = await getCollection('blog', ({ data }) => !data.draft);
+
+const counts = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.data.tags) {
+    counts.set(tag, (counts.get(tag) ?? 0) + 1);
+  }
+}
+// Most-used first, then alphabetical for ties.
+const tags = [...counts.entries()].sort(
+  (a, b) => b[1] - a[1] || a[0].localeCompare(b[0]),
+);
+---
+
+<BaseLayout title="Tags" description={`Browse posts on ${SITE_TITLE} by tag.`}>
+  <h1 class="hero reveal" style="--i: 0">Tags</h1>
+  {
+    tags.length > 0 ? (
+      <ul class="tag-cloud reveal" style="--i: 1" role="list">
+        {tags.map(([tag, count]) => (
+          <li>
+            <a class="tag-cloud__chip" href={withBase(`tags/${encodeURIComponent(tag)}/`)}>
+              <span class="tag-cloud__name">#{tag}</span>
+              <span class="tag-cloud__count">{count}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p style="color: var(--fg-secondary)">No tags yet.</p>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-sm, 0.75rem);
+    margin-top: var(--s-lg, 2rem);
+    padding: 0;
+    list-style: none;
+  }
+  .tag-cloud__chip {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    padding: 0.35rem 0.7rem;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--fg);
+    text-decoration: none;
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition:
+      border-color var(--dur-fast) var(--ease),
+      color var(--dur-fast) var(--ease);
+  }
+  .tag-cloud__chip:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .tag-cloud__count {
+    font-size: 0.75rem;
+    color: var(--fg-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+</style>

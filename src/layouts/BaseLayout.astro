@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -8,15 +9,34 @@ import '../styles/whimsy.css';
 interface Props {
   title: string;
   description: string;
+  pubDate?: Date;
+  updatedDate?: Date;
+  ogImage?: string;
+  tags?: string[];
 }
 
-const { title, description } = Astro.props;
+const { title, description, pubDate, updatedDate, ogImage, tags } = Astro.props;
+
+// Cloudflare Web Analytics — cookieless manual beacon. One CF site/token for
+// cameronsjo.github.io covers the root, /blog, and /agentic-harnesses (CF Web
+// Analytics aggregates by hostname). Token is public/write-only; no SRI hash
+// because Cloudflare serves beacon.min.js mutable/unversioned with no published
+// hash — an `integrity` pin would break on their next update.
+const CF_BEACON_TOKEN = '9db7302de886402680e0838d0f35f7db';
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead title={title} description={description} />
+    <BaseHead
+      title={title}
+      description={description}
+      pubDate={pubDate}
+      updatedDate={updatedDate}
+      ogImage={ogImage}
+      tags={tags}
+    />
+    <ClientRouter />
     {/* Theme: applied pre-paint (no FOUC), shared with the rest of the
         Artificer system via the `artificer.theme` localStorage key. */}
     <script is:inline>
@@ -37,14 +57,19 @@ const { title, description } = Astro.props;
         try {
           var stored = localStorage.getItem(KEY);
           if (stored === 'light' || stored === 'dark') initial = stored;
-        } catch (e) {}
+        } catch (e) {
+          /* localStorage blocked (private mode / disabled) — keep the dark
+             default already in `initial`; nothing actionable to log pre-paint. */
+        }
         document.documentElement.setAttribute('data-theme', initial);
 
         function apply(next) {
           document.documentElement.setAttribute('data-theme', next);
           try {
             localStorage.setItem(KEY, next);
-          } catch (e) {}
+          } catch (e) {
+            /* Persist is best-effort; the in-DOM data-theme still updates. */
+          }
           document.querySelectorAll('[data-theme-label]').forEach(function (l) {
             l.textContent = next === 'light' ? 'Light' : 'Dark';
           });
@@ -71,6 +96,12 @@ const { title, description } = Astro.props;
         } else {
           bind();
         }
+        // View Transitions swap <body> without re-firing DOMContentLoaded, so
+        // the replaced toggle buttons arrive unbound. Rebind after every swap;
+        // bind() is idempotent via the data-themeBound guard, so the overlap
+        // with the initial call above is harmless. <html> persists across
+        // swaps, so data-theme carries over with no flash.
+        document.addEventListener('astro:page-load', bind);
       })();
     </script>
   </head>
@@ -83,5 +114,11 @@ const { title, description } = Astro.props;
       </main>
       <Footer />
     </div>
+    <script
+      is:inline
+      defer
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon={`{"token":"${CF_BEACON_TOKEN}"}`}
+    />
   </body>
 </html>

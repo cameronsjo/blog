@@ -3,7 +3,9 @@ import { getCollection, render } from 'astro:content';
 import PostLayout from '../../layouts/PostLayout.astro';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
+  // Drafts are excluded from the build entirely — no page, so they also stay
+  // out of the sitemap and OG generation (mirrors the rss.xml.js filter).
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
   // `id` replaces `slug` in the Content Layer API — it is the URL-friendly key.
   return posts.map((post) => ({
     params: { slug: post.id },
@@ -12,9 +14,18 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const { Content } = await render(post);
+// render() also returns the heading tree (for the TOC) and the frontmatter our
+// remark plugin augmented (minutesRead).
+const { Content, headings, remarkPluginFrontmatter } = await render(post);
+// OG card is generated at /og/<id>.png by src/pages/og/[...slug].ts.
+const ogImage = `og/${post.id}.png`;
 ---
 
-<PostLayout {...post.data}>
+<PostLayout
+  {...post.data}
+  ogImage={ogImage}
+  headings={headings}
+  minutesRead={remarkPluginFrontmatter.minutesRead}
+>
   <Content />
 </PostLayout>

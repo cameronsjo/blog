@@ -3,11 +3,16 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { withBase } from '../utils';
 
 // Astro's collection order is non-deterministic — sort explicitly, newest first.
-const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+const allPosts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
 );
+// Landing shows the latest N; the full set lives in the paginated archive.
+const LATEST = 10;
+const posts = allPosts.slice(0, LATEST);
+const hasMore = allPosts.length > LATEST;
 ---
 
 <BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
@@ -25,4 +30,33 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
       <p style="color: var(--fg-secondary)">No posts yet.</p>
     )
   }
+  {
+    posts.length > 0 && (
+      <nav class="browse reveal" style={`--i: ${posts.length + 1}`} aria-label="Browse">
+        {hasMore && (
+          <a href={withBase('archive/')}>Archive →</a>
+        )}
+        <a href={withBase('tags/')}>Tags →</a>
+      </nav>
+    )
+  }
 </BaseLayout>
+
+<style>
+  .browse {
+    display: flex;
+    gap: var(--s-lg, 2rem);
+    margin-top: var(--s-xl, 3rem);
+    padding-top: var(--s-md, 1rem);
+    border-top: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+  }
+  .browse a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .browse a:hover {
+    color: var(--accent-bright);
+  }
+</style>

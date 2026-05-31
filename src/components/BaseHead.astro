@@ -1,16 +1,66 @@
 ---
-import { SITE_TITLE } from '../consts';
+import { SITE_TITLE, SITE_AUTHOR, GITHUB_URL } from '../consts';
 import { withBase } from '../utils';
 
 interface Props {
   title: string;
   description: string;
+  // Optional post-specific SEO. When `pubDate` is set the page is treated as a
+  // BlogPosting (article OG type + JSON-LD); otherwise it's the site WebSite.
+  pubDate?: Date;
+  updatedDate?: Date;
+  // Bare path to the OG card (e.g. "og/slug.png"); made absolute below.
+  ogImage?: string;
+  tags?: string[];
 }
 
-const { title, description } = Astro.props;
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  ogImage = 'og/default.png',
+  tags = [],
+} = Astro.props;
+
 const pageTitle = title === SITE_TITLE ? title : `${title} · ${SITE_TITLE}`;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const rssURL = new URL(withBase('rss.xml'), Astro.site);
+const ogImageURL = new URL(withBase(ogImage), Astro.site);
+
+const isPost = Boolean(pubDate);
+const ogType = isPost ? 'article' : 'website';
+
+// Author is a plain Person (name + site link) — deliberately no jobTitle or
+// employer. This is a personal/home space, not a résumé.
+const author = {
+  '@type': 'Person',
+  name: SITE_AUTHOR,
+  url: GITHUB_URL,
+};
+
+const jsonLd = isPost
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: title,
+      description,
+      datePublished: pubDate!.toISOString(),
+      dateModified: (updatedDate ?? pubDate!).toISOString(),
+      author,
+      image: ogImageURL.href,
+      url: canonicalURL.href,
+      mainEntityOfPage: canonicalURL.href,
+      ...(tags.length > 0 ? { keywords: tags.join(', ') } : {}),
+    }
+  : {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: SITE_TITLE,
+      description,
+      url: new URL(withBase(''), Astro.site).href,
+      author,
+    };
 ---
 
 <meta charset="utf-8" />
@@ -23,12 +73,26 @@ const rssURL = new URL(withBase('rss.xml'), Astro.site);
 <title>{pageTitle}</title>
 <meta name="description" content={description} />
 
-<meta property="og:type" content="website" />
+<meta property="og:type" content={ogType} />
 <meta property="og:url" content={canonicalURL} />
 <meta property="og:title" content={pageTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:site_name" content={SITE_TITLE} />
+<meta property="og:image" content={ogImageURL} />
+{
+  isPost && (
+    <>
+      <meta property="article:published_time" content={pubDate!.toISOString()} />
+      {updatedDate && (
+        <meta property="article:modified_time" content={updatedDate.toISOString()} />
+      )}
+    </>
+  )
+}
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={pageTitle} />
 <meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImageURL} />
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} is:inline />

@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Search from 'astro-pagefind/components/Search.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<BaseLayout title="Search" description={`Search ${SITE_TITLE}.`}>
+  <h1 class="hero reveal" style="--i: 0">Search</h1>
+  <div class="search reveal" style="--i: 1" data-pagefind-ignore>
+    <Search
+      className="pagefind-ui"
+      searchboxOptions={{ placeholder: 'Search posts…' }}
+    />
+  </div>
+</BaseLayout>
+
+<style is:global>
+  /* Tint the Pagefind component-ui to the editorial-terminal palette. */
+  .search {
+    --pagefind-ui-primary: var(--accent);
+    --pagefind-ui-text: var(--fg);
+    --pagefind-ui-background: var(--bg-raised);
+    --pagefind-ui-border: var(--border);
+    --pagefind-ui-tag: var(--bg-overlay);
+    --pagefind-ui-border-radius: var(--radius-md);
+    --pagefind-ui-font: var(--font-sans);
+    margin-top: var(--s-lg, 2rem);
+  }
+</style>

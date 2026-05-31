@@ -1,0 +1,84 @@
+---
+import type { GetStaticPaths, Page } from 'astro';
+import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { SITE_TITLE } from '../../consts';
+
+// Paginated archive of every published post. Lives at /archive (not /posts) to
+// avoid colliding with the /posts/[...slug] post route — two rest routes can't
+// share a directory. index.astro is the latest-N landing and links here.
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+    (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+  );
+  return paginate(posts, { pageSize: 10 });
+}) satisfies GetStaticPaths;
+
+interface Props {
+  page: Page<CollectionEntry<'blog'>>;
+}
+
+const { page } = Astro.props;
+---
+
+<BaseLayout title="Archive" description={`Every post on ${SITE_TITLE}.`}>
+  <h1 class="hero reveal" style="--i: 0">Archive</h1>
+  <ol class="entries reveal" style="--i: 1" role="list">
+    {page.data.map((post, i) => (
+      <li>
+        <PostCard post={post} index={page.start + i} />
+      </li>
+    ))}
+  </ol>
+
+  {
+    (page.url.prev || page.url.next) && (
+      <nav class="pager reveal" style="--i: 2" aria-label="Pagination">
+        {page.url.prev ? (
+          <a class="pager__link" href={page.url.prev} rel="prev">
+            ← Newer
+          </a>
+        ) : (
+          <span class="pager__link pager__link--disabled">← Newer</span>
+        )}
+        <span class="pager__status">
+          Page {page.currentPage} of {page.lastPage}
+        </span>
+        {page.url.next ? (
+          <a class="pager__link" href={page.url.next} rel="next">
+            Older →
+          </a>
+        ) : (
+          <span class="pager__link pager__link--disabled">Older →</span>
+        )}
+      </nav>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .pager {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-md, 1rem);
+    margin-top: var(--s-xl, 3rem);
+    padding-top: var(--s-md, 1rem);
+    border-top: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+  }
+  .pager__link {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .pager__link--disabled {
+    color: var(--fg-disabled);
+  }
+  .pager__status {
+    color: var(--fg-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+</style>
