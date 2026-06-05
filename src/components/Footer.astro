@@ -10,7 +10,12 @@ const year = new Date().getFullYear();
   style="border-color: var(--border); color: var(--fg-secondary)"
 >
   <span>© {year} {SITE_TITLE}</span>
-  <span class="whimsy whimsy--glacial" style="font-size: smaller">kindness is free.</span>
+  {/* Pride — local June variant. Full Whimsy (flowing full-spectrum rainbow),
+      not the wordmark's brand-cycle, so it reads as pride. Lifted from the
+      near-static .whimsy--glacial to flowing .whimsy per the upstream spec's
+      "full Whimsy" intent. Swap for the canonical primitive when it ships:
+      artificer-design-system/.claude/intros/2026-06-05-1205-pride-footer-and-nav-primitives.md */}
+  <span class="whimsy" style="font-size: smaller">happy pride</span>
   <span class="flex gap-4">
     <a href={withBase('rss.xml')}>RSS</a>
     <a href={GITHUB_URL}>GitHub</a>
