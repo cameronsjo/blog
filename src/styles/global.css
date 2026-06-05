@@ -1,6 +1,17 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* ── Artificer design system — the source of truth for tokens + whimsy ───
+   Consuming the published package (@cameronsjo/artificer); the dep version in
+   package.json is the provenance. These ship every semantic token the blog
+   references — surfaces, fg, accent, steel, brand-purple, attention, success,
+   on-accent, the spacing and radius scales, dur-fast, ease, and the body
+   letter/word spacing — with the [data-theme="light"] switch the toggle drives.
+   The blog-layer additions below (self-hosted fonts, editorial pass) sit on top.
+   See docs/artificer-adaptations.md. */
+@import "@cameronsjo/artificer/artificer.css";
+@import "@cameronsjo/artificer/whimsy.css";
+
 /* ── Self-hosted fonts (Artificer bundle, SIL OFL 1.1) ───────────────────
    JetBrains Mono → headlines, code, identifiers.
    iA Writer Quattro S → humanist-sans document body. Quattro is not on
@@ -45,76 +56,6 @@
 @theme {
   --font-sans: "iA Writer Quattro S", "Iowan Old Style", "Charter", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", "Berkeley Mono", ui-monospace, "SF Mono", Menlo, monospace;
-}
-
-/* ── Artificer semantic tokens · DARK (default) ──────────────────────────
-   v0.6 palette (apothecary × deco × speakeasy), current as of Artificer
-   v0.10.1 (--art-version above) — these hex values are unchanged v0.6→0.10.1;
-   only roles/contracts and additive tokens moved. Mirror of the design-system
-   source; do not substitute without re-checking AAA contrast. */
-:root {
-  --art-version: "0.10.1";   /* Artificer provenance — see UPGRADE.md */
-  --bg: #292c33;
-  --bg-raised: #313540;
-  --bg-overlay: #3c4150;
-  --bg-inactive: #1d1f21;
-
-  --fg: #e8e6e1;
-  --fg-secondary: #c5c8c6;
-  --fg-disabled: #666666;
-  --border: #4a4f5c;
-
-  --accent: #dbbb6f;        /* burnished gold — interactive */
-  --accent-bright: #e3c885; /* hover/focus */
-  --accent-fill: #c4932a;   /* deep gold fill */
-  --on-accent: #20203e;     /* indigo on gold */
-
-  --steel: #b8cad4;         /* meta / paths / chrome */
-  --brand-purple: #5a3a9a;  /* wordmark only — decorative, never semantic */
-
-  /* Needed by the whimsy brand gradient (full Artificer palette). */
-  --attention: #c4808a;     /* dusty rose */
-  --success: #4a8a5e;       /* apothecary green */
-
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-
-  --s-xs: 4px; --s-sm: 8px; --s-md: 16px; --s-lg: 24px; --s-xl: 32px; --s-2xl: 48px;
-
-  --dur-fast: 160ms;
-  --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
-
-  --letter-spacing-body: 0.01em;
-  --word-spacing-body: 0.16em;
-
-  color-scheme: dark;
-}
-
-/* ── Paper light mode ────────────────────────────────────────────────── */
-:root[data-theme="light"] {
-  --bg: #f5ead0;            /* ivory paper */
-  --bg-raised: #eddcc0;     /* champagne */
-  --bg-overlay: #e4d4b0;
-  --bg-inactive: #dcc99c;
-
-  --fg: #20203e;            /* midnight indigo ink */
-  --fg-secondary: #4a3f2a;
-  --fg-disabled: #8a8070;
-  --border: #cbb88a;
-
-  --accent: #7a5a10;
-  --accent-bright: #8a6618;
-  --accent-fill: #c4932a;
-  --on-accent: #f5ead0;
-
-  --steel: #2e4a5a;
-  --brand-purple: #4a25a0;
-
-  --attention: #8a6618;
-  --success: #2a5a3a;
-
-  color-scheme: light;
 }
 
 html {
@@ -166,6 +107,16 @@ a:hover {
 }
 .wordmark:hover {
   text-decoration: none;
+}
+/* SITE_WORDMARK already carries its own period ("blog."), and the blog's design
+   shimmers that stop as part of the whimsy gradient. The package's .wordmark
+   primitive (artificer.css) appends its own accent stop via ::after, assuming a
+   period-less mark — which double-stops us to "blog..". Suppress the primitive's
+   stop; ours lives in the text. (Can't adopt the primitive's ::after instead:
+   .whimsy's inherited -webkit-text-fill-color: transparent would render it
+   invisible, since background-image doesn't inherit to the pseudo-element.) */
+.wordmark::after {
+  content: none;
 }
 
 code, pre, kbd {
