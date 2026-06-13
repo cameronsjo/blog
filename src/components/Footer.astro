@@ -10,7 +10,21 @@ const year = new Date().getFullYear();
   style="border-color: var(--border); color: var(--fg-secondary)"
 >
   <span>© {year} {SITE_TITLE}</span>
-  <span class="whimsy whimsy--glacial" style="font-size: smaller">kindness is free.</span>
+  {/* Seasonal greeting (artificer-whimsy). The inline text IS the off-season
+      line and renders gracefully with JS disabled; Whimsy.greeting() swaps in
+      "happy pride" + vivid flow during June, else applies the glacial drift.
+      w-fit: .whimsy-underline draws its rainbow rule edge-to-edge of this box,
+      and a flex child stretches to full width below the sm breakpoint (flex-col
+      → align-items:stretch) — fit-content keeps the box hugging the text so the
+      underline sits under the words, not across the whole footer. */}
+  <span
+    data-whimsy-greeting
+    data-whimsy-greeting-class="whimsy--glacial"
+    class="w-fit"
+    style="font-size: smaller"
+  >
+    kindness is free.
+  </span>
   <span class="flex gap-4">
     <a href={withBase('rss.xml')}>RSS</a>
     <a href={GITHUB_URL}>GitHub</a>

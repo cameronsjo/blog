@@ -3,8 +3,9 @@ import { ClientRouter } from 'astro:transitions';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import '@cameronsjo/artificer/artificer.css';
+import '@cameronsjo/artificer/whimsy.css';
 import '../styles/global.css';
-import '../styles/whimsy.css';
 
 interface Props {
   title: string;
@@ -120,5 +121,23 @@ const CF_BEACON_TOKEN = '9db7302de886402680e0838d0f35f7db';
       src="https://static.cloudflareinsights.com/beacon.min.js"
       data-cf-beacon={`{"token":"${CF_BEACON_TOKEN}"}`}
     />
+    <script>
+      // Seasonal footer greeting (artificer-whimsy). Sets window.Whimsy and
+      // swaps [data-whimsy-greeting]: June → "happy pride" (vivid per-char flow,
+      // the one line that never settles); off-season → the footer's own inline
+      // line + glacial drift. Graceful without JS (plain inline text).
+      //
+      // whimsy.js is a side-effect-only module (exports nothing; just assigns
+      // window.Whimsy), and the package marks JS side-effect-free
+      // (sideEffects: ["*.css"]) — so a *static* `import` gets tree-shaken away
+      // and the feature silently dies. A dynamic import is never shaken: load it
+      // once, cache window.Whimsy, then re-apply after every View-Transitions
+      // swap (astro:page-load fires on initial load too; greeting() is
+      // idempotent per element via its done-flag guard).
+      document.addEventListener('astro:page-load', async () => {
+        if (!window.Whimsy) await import('@cameronsjo/artificer/whimsy.js');
+        window.Whimsy?.greeting();
+      });
+    </script>
   </body>
 </html>
