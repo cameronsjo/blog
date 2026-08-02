@@ -4,6 +4,22 @@ How this project bends the Artificer design system, and why. Each surviving
 entry mirrors a feedback issue filed upstream — a divergence not worth filing
 is not worth keeping.
 
+## 2026-08-02 · Bumped to 0.21.0
+
+**Version bump only** — `@cameronsjo/artificer` 0.18.0 → 0.21.0 (npm sat at
+0.18.1 since June; 0.19.0/0.20.0 were never published, so this crossed three
+unpublished minors). `npm install`, no consumption-shape changes: still Path B
+(Vite `import` from `node_modules`), still skipping `artificer-editorial.css`
+and `artificer-theme.js`. `--art-version` in the built CSS confirms `"0.21.0"`.
+Build is clean; all three surviving divergences below remain current — none
+were absorbed by this range.
+
+First run of `npx @cameronsjo/artificer lint "src/**/*.css"` against this repo:
+3 pre-existing Hard-rule-#1 violations in `global.css` (raw `16px`/`12px`
+font-sizes at L28, L222, L228 that map to `--t-body-lg-size` /
+`--t-label-sm-size`), predating this bump. Not fixed here — recorded for a
+follow-up pass.
+
 ## 2026-06-13 · Retired the hand-subset, adopted standard consumption (0.18.0)
 
 **Model migration.** The blog had consumed Artificer as a *hand-authored token
