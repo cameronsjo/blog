@@ -4,6 +4,25 @@ How this project bends the Artificer design system, and why. Each surviving
 entry mirrors a feedback issue filed upstream — a divergence not worth filing
 is not worth keeping.
 
+## 2026-08-02 · Adopted the `.colophon__spine` three-zone footer (0.22.0)
+
+**Version bump** — `@cameronsjo/artificer` 0.21.0 → 0.22.0, which mints
+`.colophon__spine` on the existing `.colophon` primitive (part of a six-site
+consistency pass putting every sibling site's footer on the same three-zone
+shape: optional label zone, always-present spine, optional fine-print zone).
+
+**Footer rewrite.** `Footer.astro` now wraps `<footer class="colophon">` /
+`<div class="container">` / `<div class="colophon__spine">` around the
+existing three pieces of content — copyright, the `data-whimsy-greeting`
+sign-off, and the RSS/GitHub links (now a `<nav class="cluster">`, the
+spine's third positional slot). Zones 1 and 3 are unused; this site has no
+label sections or fine print. All the Tailwind utility classes and inline
+styles the old footer carried (`flex flex-col gap-2 border-t py-6 text-sm
+sm:flex-row sm:items-center sm:justify-between`, the inline `border-color`/
+`color`, and the sign-off's `w-fit` + inline `font-size: smaller`) are
+deleted — the primitive now owns spacing, type treatment, the 44×44 touch
+floor on spine links, and the mobile stack.
+
 ## 2026-08-02 · Bumped to 0.21.0
 
 **Version bump only** — `@cameronsjo/artificer` 0.18.0 → 0.21.0 (npm sat at
