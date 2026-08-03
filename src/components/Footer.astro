@@ -5,28 +5,20 @@ import { withBase } from '../utils';
 const year = new Date().getFullYear();
 ---
 
-<footer
-  class="flex flex-col gap-2 border-t py-6 text-sm sm:flex-row sm:items-center sm:justify-between"
-  style="border-color: var(--border); color: var(--fg-secondary)"
->
-  <span>© {year} {SITE_TITLE}</span>
-  {/* Seasonal greeting (artificer-whimsy). The inline text IS the off-season
-      line and renders gracefully with JS disabled; Whimsy.greeting() swaps in
-      "happy pride" + vivid flow during June, else applies the glacial drift.
-      w-fit: .whimsy-underline draws its rainbow rule edge-to-edge of this box,
-      and a flex child stretches to full width below the sm breakpoint (flex-col
-      → align-items:stretch) — fit-content keeps the box hugging the text so the
-      underline sits under the words, not across the whole footer. */}
-  <span
-    data-whimsy-greeting
-    data-whimsy-greeting-class="whimsy--glacial"
-    class="w-fit"
-    style="font-size: smaller"
-  >
-    kindness is a choice.
-  </span>
-  <span class="flex gap-4">
-    <a href={withBase('rss.xml')}>RSS</a>
-    <a href={GITHUB_URL}>GitHub</a>
-  </span>
+<footer class="colophon">
+  <div class="container">
+    <div class="colophon__spine">
+      <span>© {year} {SITE_TITLE}</span>
+      {/* Seasonal greeting (artificer-whimsy). The inline text IS the off-season
+          line and renders gracefully with JS disabled; Whimsy.greeting() swaps in
+          "happy pride" + vivid flow during June, else applies the glacial drift. */}
+      <span data-whimsy-greeting data-whimsy-greeting-class="whimsy--glacial">
+        kindness is a choice.
+      </span>
+      <nav class="cluster">
+        <a href={withBase('rss.xml')}>RSS</a>
+        <a href={GITHUB_URL}>GitHub</a>
+      </nav>
+    </div>
+  </div>
 </footer>
