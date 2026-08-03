@@ -1,11 +1,11 @@
 ---
-title: "430 commits, 66 PRs, one weekend: a log"
-description: Three days across nine workstreams — a keyless auth hole, four guards that failed open, a database that had to be argued into existence, and one CSS primitive that landed on six sites.
+title: "244 commits, 92 PRs, one weekend: a log"
+description: Three days, nine workstreams — a keyless auth hole, four guards that failed open, and a database that had to be argued into existence.
 pubDate: 2026-08-02
-tags: [homelab, security, infrastructure, log]
+tags: [homelab, security]
 ---
 
-Friday night through Sunday night: 430 non-merge commits, 66 merged pull requests, eighteen repositories. I didn't set out to do that. I set out to fix one thing on Friday, and the weekend kept handing me the next thing.
+Friday night through Sunday night: 244 commits landed across eighteen repositories, behind 92 merged pull requests. I didn't set out to do that. I set out to fix one thing on Friday, and the weekend kept handing me the next thing.
 
 So this is a log rather than an essay. I want the sequence written down while I still remember why each decision looked reasonable at the time, because a fair amount of what follows is me finding out that something I'd already built wasn't doing anything.
 
@@ -39,7 +39,7 @@ Then on Sunday I read my own documentation and found it lying.
 
 Both `CLAUDE.md` and `security.md` said untrusted code goes to Cloudflare Workers — V8 isolates, "never on the VM directly." I measured it instead of believing it. A code-execution block reports hostname `hermes`, uid 10000, and `code_execution_tool.py` shells out via `subprocess`. Hermes has no external-sandbox hook anywhere in its source: no `sandbox_url`, no `remote_sandbox`, nothing that would redirect execution to an HTTP endpoint. The Cloudflare worker was deployed and healthy, returning 405 on GET and 401 on an unauthenticated POST, and it had never been wired in. It was also unreachable from the container, since `workers.dev` isn't on the egress allowlist.
 
-The container was doing the containing the whole time. My documentation credited a control that did not exist, while the one actually doing the work went unnamed. That exact shape — a real control working anonymously while a fictional one takes the credit — turned up eleven times this weekend across three subsystems, which is how it ended up as a named skill by Sunday night.
+The container was doing the containing the whole time, and doing it on purpose. Its compose file opens with the line "the agent is prompt-injectable by design. Every control below assumes the agent itself is hostile," and there is no `ports:` stanza anywhere, so inbound is closed by the absence of a publish rather than by a rule someone has to maintain. None of that was luck. My documentation just credited a control that did not exist while the one actually doing the work went unnamed. That exact shape — a real control working anonymously while a fictional one takes the credit — turned up eleven times this weekend across three subsystems, which is how it ended up as a named skill by Sunday night.
 
 Also Saturday, and much more pleasant: `homelan` collapsed 33 `ts-*` DNS records into one name everywhere. My domain now resolves identically on the LAN and on the tailnet, so a certificate warning on one of those names has become diagnostic. It means you're off the tailnet. I also tagged the NAS `tag:infra` in Tailscale, which killed a 13-day key expiry fuse nobody had noticed was burning.
 
@@ -164,5 +164,7 @@ Nine workstreams, and one sentence keeps surfacing in the commit bodies: the thi
 A wrong default is invisible to config review, because the config looks complete. A doc can credit a sandbox that was never wired in while a container quietly does the job. A `pre-push` hook can point at an empty directory for months. And a control that blocks everything is indistinguishable, from the blocked side, from a control that works.
 
 None of that is discoverable by reading. It fell out of attacking the mechanism, or of a deploy touching real state for the first time. Which is the uncomfortable part, because reading is cheap and both of the other two are not — I can't run a live negative test against every gate I own every week, and I don't have a good answer yet for which ones earn it.
+
+This post had the disease too. The first draft opened with 430 commits and 66 pull requests. I'd counted with `git log --all`, which in a squash-merge repo counts the branch commit and its squashed landing as two separate commits, so the total was inflated by most of two hundred. The PR number was wrong in the other direction, because I'd grepped commit subjects for `(#123)` rather than asking `gh`, and missed a third of them. One repo reported zero because I looked for `origin/main` and its remote is named `gitea`. All three numbers looked reasonable. None of them had been checked against the thing they claimed to count.
 
 What I do have is a smaller rule that survived the weekend: whatever the check returns, make it prove the mechanism engaged. Not that the config parsed. Not that the file conformed. The 429s, the refused connection, the 401 with no header. Everything else this weekend was green.
