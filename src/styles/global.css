@@ -1,56 +1,9 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/* ── Artificer design system — the source of truth for tokens + whimsy ───
-   Consuming the published package (@cameronsjo/artificer); the dep version in
-   package.json is the provenance. These ship every semantic token the blog
-   references — surfaces, fg, accent, steel, brand-purple, attention, success,
-   on-accent, the spacing and radius scales, dur-fast, ease, and the body
-   letter/word spacing — with the [data-theme="light"] switch the toggle drives.
-   The blog-layer additions below (self-hosted fonts, editorial pass) sit on top.
-   See docs/artificer-adaptations.md. */
-@import "@cameronsjo/artificer/artificer.css";
-@import "@cameronsjo/artificer/whimsy.css";
-
-/* ── Self-hosted fonts (Artificer bundle, SIL OFL 1.1) ───────────────────
-   JetBrains Mono → headlines, code, identifiers.
-   iA Writer Quattro S → humanist-sans document body. Quattro is not on
-   Google Fonts, so it must be self-hosted to render as intended. */
-@font-face {
-  font-family: 'JetBrains Mono';
-  src: url('../fonts/jetbrains-mono-400.woff2') format('woff2');
-  font-weight: 400; font-style: normal; font-display: swap;
-}
-@font-face {
-  font-family: 'JetBrains Mono';
-  src: url('../fonts/jetbrains-mono-500.woff2') format('woff2');
-  font-weight: 500; font-style: normal; font-display: swap;
-}
-@font-face {
-  font-family: 'JetBrains Mono';
-  src: url('../fonts/jetbrains-mono-700.woff2') format('woff2');
-  font-weight: 700; font-style: normal; font-display: swap;
-}
-@font-face {
-  font-family: 'iA Writer Quattro S';
-  src: url('../fonts/ia-writer-quattro-s-400.woff2') format('woff2');
-  font-weight: 400; font-style: normal; font-display: swap;
-}
-@font-face {
-  font-family: 'iA Writer Quattro S';
-  src: url('../fonts/ia-writer-quattro-s-400-italic.woff2') format('woff2');
-  font-weight: 400; font-style: italic; font-display: swap;
-}
-@font-face {
-  font-family: 'iA Writer Quattro S';
-  src: url('../fonts/ia-writer-quattro-s-700.woff2') format('woff2');
-  font-weight: 700; font-style: normal; font-display: swap;
-}
-@font-face {
-  font-family: 'iA Writer Quattro S';
-  src: url('../fonts/ia-writer-quattro-s-700-italic.woff2') format('woff2');
-  font-weight: 700; font-style: italic; font-display: swap;
-}
+/* Fonts (iA Writer Quattro S + JetBrains Mono) are provided by
+   @cameronsjo/artificer's bundled @font-face — Vite resolves and emits the
+   hashed woff2 from node_modules under the /blog/ base. */
 
 /* Expose the font stacks as Tailwind theme vars (font-sans / font-mono). */
 @theme {
@@ -58,17 +11,23 @@
   --font-mono: "JetBrains Mono", "Berkeley Mono", ui-monospace, "SF Mono", Menlo, monospace;
 }
 
+/* ── Blog-specific base ──────────────────────────────────────────────────
+   @cameronsjo/artificer (artificer.css) owns the full semantic palette, the
+   [data-theme] flip, color-scheme, spacing/radius/easing tokens, and the
+   html/body background·color·letter-spacing·body-face. Everything below is
+   the editorial layer the blog stacks on top of that. */
+
 html {
-  background-color: var(--bg);
-  color: var(--fg);
+  /* 16px is the rem/clamp() anchor the blog's headings are sized against.
+     artificer's `html { font-size: 100% }` resolves to the same value; pin
+     it so the editorial type scale stays explicit. font-family is preflight
+     insurance; word-spacing applies the body var artificer defines but never
+     itself uses. Background/color/letter-spacing/transition come from
+     artificer's `html, body` rule. */
   font-family: var(--font-sans);
   font-size: 16px;
   line-height: 1.65;
-  letter-spacing: var(--letter-spacing-body);
   word-spacing: var(--word-spacing-body);
-  transition:
-    background-color var(--dur-fast) var(--ease),
-    color var(--dur-fast) var(--ease);
 }
 
 body {
@@ -90,18 +49,11 @@ header, footer, nav {
   word-spacing: normal;
 }
 
-a {
-  color: var(--accent);
-  text-decoration: none;
-}
-a:hover {
-  color: var(--accent-bright);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-/* Wordmark sits at --fg (not the gold link color) until whimsy ignites it.
-   whimsy.css is imported after this file, so .whimsy wins on hover. */
+/* The generic `a` / `a:hover` accent rules now come from artificer.css.
+   The wordmark is an <a> carrying `.whimsy whimsy--brand`, so its glyphs are
+   gradient-filled; suppress artificer's `a:hover` underline so the mark never
+   gains a line under the flowing fill. (Base color is artificer's `.wordmark`;
+   --fg here is harmless belt-and-suspenders should whimsy not paint.) */
 .wordmark {
   color: var(--fg);
 }
@@ -188,11 +140,7 @@ code, pre, kbd {
 :root { --grain-opacity: 0.028; }
 :root[data-theme="light"] { --grain-opacity: 0.05; }
 
-/* Selection — gold fill, a small signature detail. */
-::selection {
-  background: var(--accent-fill);
-  color: var(--on-accent);
-}
+/* ::selection (gold fill) now comes from artificer.css. */
 
 /* Paper grain — faint fractal-noise texture for atmosphere. Static; reads as
    paper tooth in light mode, film grain in dark. Sits below content. */
