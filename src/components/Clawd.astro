@@ -1,0 +1,78 @@
+---
+// Clawd, the Claude Code mascot, as the exact three rows of quadrant block
+// characters Claude Code prints in its welcome banner. Real text: it renders in
+// JetBrains Mono (block glyphs come from the unicode-range subset declared in
+// global.css) and it copy-pastes back into a terminal intact.
+//
+// Colored --accent: Artificer's Claude Code theme maps `clawd_body` to accent,
+// so this is the same Clawd the terminal paints. Hover a `.clawd-host`
+// ancestor (or Clawd himself) and he hops once — a state change, not a loop.
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+
+const CLAWD = [' ▐▛███▜▌', '▝▜█████▛▘', '  ▘▘ ▝▝'].join('\n');
+---
+
+<pre
+  class:list={['clawd', className]}
+  role="img"
+  aria-label="Clawd, the Claude Code mascot, drawn in block characters">{CLAWD}</pre>
+
+<style>
+  .clawd {
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    background: none;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-weight: 400;
+    /* 20px → 12px cells and 6px quadrants: whole pixels, so adjacent glyphs
+       meet without anti-aliased seams. The block glyphs are 1.32em tall
+       (26.4px); a whole-pixel 26px line pitch overlaps rows by a hair. A
+       fractional pitch lets baseline snapping alternate 19/20px and open a
+       hairline between rows, so both sizes pin line-height to whole pixels. */
+    font-size: 1.25rem;
+    line-height: 1.625rem;
+    /* The page's body letter/word spacing would pry the glyphs apart. */
+    letter-spacing: 0;
+    word-spacing: normal;
+    font-kerning: none;
+    font-variant-ligatures: none;
+    /* Where two glyphs' anti-aliased edges meet, their partial coverages don't
+       add up to a solid pixel, leaving hairline seams (worst on light ground).
+       A same-color stroke this thin swells each glyph just past the seam. */
+    -webkit-text-stroke: 0.03em currentColor;
+  }
+
+  @keyframes clawd-hop {
+    0%,
+    100% {
+      transform: none;
+    }
+    45% {
+      transform: translateY(-0.35em);
+    }
+  }
+  .clawd:hover,
+  :global(.clawd-host:hover) .clawd {
+    animation: clawd-hop var(--dur-max) var(--ease);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .clawd:hover,
+    :global(.clawd-host:hover) .clawd {
+      animation: none;
+    }
+  }
+
+  /* Phones: 15px keeps whole-pixel 9px cells; 19px rows under 19.8px glyphs. */
+  @media (max-width: 480px) {
+    .clawd {
+      font-size: 0.9375rem;
+      line-height: 1.1875rem;
+    }
+  }
+</style>

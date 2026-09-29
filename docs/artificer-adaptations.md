@@ -4,6 +4,36 @@ How this project bends the Artificer design system, and why. Each surviving
 entry mirrors a feedback issue filed upstream — a divergence not worth filing
 is not worth keeping.
 
+## 2026-09-29 · Facelift: reading-progress top rule, Clawd, block-glyph font (0.22.1)
+
+**Reading progress.** The fixed gold → purple `.topline` moved into
+`ReadingProgress.astro`. On posts (`PostLayout` passes `progress`, the
+`<article>` carries `[data-progress-target]`) it is a 3px bar over a `--border`
+track that fills as the article scrolls past. It reveals with `clip-path`, so
+the gradient stays pinned to the viewport. Everywhere else it is the same full,
+static 2px rule as before. The header stays **non-sticky**. #131 asked for
+exactly that, and `.masthead` codified it. A sticky `.page-shell > header`
+version was built and reverted, so the progress bar is its own fixed element
+instead of riding the header.
+
+**Header.** Same structure. It borrows `.masthead__nav`'s current-page
+treatment (accent + 2px inset band) instead of an fg/secondary color swap,
+which keeps "you are here" from riding on color alone. It also moves the toggle
+to tokens, gives touch pointers 44px targets, and collapses the toggle to its
+dot under 400px so the row fits a 320px viewport.
+
+**Clawd.** The index h1 now sits in a Claude Code welcome-box homage
+(`index.astro`, `Clawd.astro`). Both the frame and Clawd are `--accent`,
+matching the Claude Code theme's `claude` / `clawd_body` → `P.accent` mapping.
+
+| type | surface | what + why | upstream? |
+|------|---------|------------|-----------|
+| gap | font | **Block-glyph subset.** The bundled JetBrains Mono is a 229-glyph Latin subset with no U+2500–259F, so Clawd (and any `├──` tree in a code block) rendered in the OS fallback mono and misaligned. `src/assets/fonts/jetbrains-mono-blocks.woff2` (2.5 KB, JetBrains Mono 2.304 Regular, OFL) extends the `"JetBrains Mono"` family via `unicode-range`. It is declared once per bundled weight: a face with a different weight descriptor is never consulted. Regenerate command in `global.css`. Retire when the package's subset includes U+2500–259F. | yes |
+| extension | progress | **Reading-progress bar.** No system primitive exists. Blog-local, built only from existing tokens. | maybe |
+| extension | Clawd | **Block-glyph rendering recipe:** whole-pixel cells (20/15px), whole-pixel line pitch under the 1.32em glyph (26/19px), body letter/word spacing undone, and a `0.03em` same-color text stroke to close anti-alias seams. Recorded upstream in case the system ever documents ASCII/TUI art. | maybe |
+
+**Filed upstream:** [`cameronsjo/artificer-design-system#523`](https://github.com/cameronsjo/artificer-design-system/issues/523).
+
 ## 2026-08-02 · Adopted the `.colophon__spine` three-zone footer (0.22.0)
 
 **Version bump** — `@cameronsjo/artificer` 0.21.0 → 0.22.0, which mints

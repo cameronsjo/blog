@@ -3,6 +3,7 @@ import { ClientRouter } from 'astro:transitions';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import ReadingProgress from '../components/ReadingProgress.astro';
 import '@cameronsjo/artificer/artificer.css';
 import '@cameronsjo/artificer/whimsy.css';
 import '../styles/global.css';
@@ -14,9 +15,12 @@ interface Props {
   updatedDate?: Date;
   ogImage?: string;
   tags?: string[];
+  // Turns the top rule into a reading-progress bar (posts). The page marks what
+  // counts as "the read" with [data-progress-target].
+  progress?: boolean;
 }
 
-const { title, description, pubDate, updatedDate, ogImage, tags } = Astro.props;
+const { title, description, pubDate, updatedDate, ogImage, tags, progress = false } = Astro.props;
 
 // Cloudflare Web Analytics — cookieless manual beacon. One CF site/token for
 // cameronsjo.github.io covers the root, /blog, and /agentic-harnesses (CF Web
@@ -107,7 +111,7 @@ const CF_BEACON_TOKEN = '9db7302de886402680e0838d0f35f7db';
     </script>
   </head>
   <body>
-    <div class="topline" aria-hidden="true"></div>
+    <ReadingProgress progress={progress} />
     <div class="shell mx-auto flex min-h-screen max-w-2xl flex-col px-5">
       <Header />
       <main class="flex-1 py-10">
