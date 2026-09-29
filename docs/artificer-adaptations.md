@@ -47,7 +47,7 @@ as text axe flags every `●`.
 | extension | progress | **Reading-progress bar.** No system primitive exists. Blog-local, built only from existing tokens. | maybe |
 | extension | Pip | **Block-glyph rendering recipe:** whole-pixel cells (20/15px), whole-pixel line pitch under the 1.32em glyph (26/19px), body letter/word spacing undone, and a `0.03em` same-color text stroke to close anti-alias seams. Recorded upstream in case the system ever documents ASCII/TUI art. | maybe |
 
-**Filed upstream:** [`cameronsjo/artificer-design-system#523`](https://github.com/cameronsjo/artificer-design-system/issues/523).
+**Filed upstream:** [`cameronsjo/artificer-design-system#523`](https://github.com/cameronsjo/artificer-design-system/issues/523) (font gap, progress bar, text-art recipe) and [`#524`](https://github.com/cameronsjo/artificer-design-system/issues/524) (Pip, proposed for § Brand).
 
 ## 2026-08-02 · Adopted the `.colophon__spine` three-zone footer (0.22.0)
 
