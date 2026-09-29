@@ -4,7 +4,7 @@ How this project bends the Artificer design system, and why. Each surviving
 entry mirrors a feedback issue filed upstream — a divergence not worth filing
 is not worth keeping.
 
-## 2026-09-29 · Facelift: reading-progress top rule, Clawd, block-glyph font (0.22.1)
+## 2026-09-29 · Facelift: reading-progress top rule, Pip, block-glyph font (0.22.1)
 
 **Reading progress.** The fixed gold → purple `.topline` moved into
 `ReadingProgress.astro`. On posts (`PostLayout` passes `progress`, the
@@ -22,25 +22,30 @@ which keeps "you are here" from riding on color alone. It also moves the toggle
 to tokens, gives touch pointers 44px targets, and collapses the toggle to its
 dot under 400px so the row fits a 320px viewport.
 
-**Clawd.** The index h1 now sits in a Claude Code welcome-box homage
-(`index.astro`, `Clawd.astro`). Both the frame and Clawd are `--accent`,
-matching the Claude Code theme's `claude` / `clawd_body` → `P.accent` mapping.
+**Pip.** Artificer's critter, minted here: a burnished seed with a sprout,
+two dot eyes and two feet (`Pip.astro`). It is the wordmark's gold full stop
+that took root, since a pip is both a dot and a seed, so it is `--accent`. It
+is an original 18×10 px sprite drawn in quadrant block glyphs. A first draft
+used Clawd, Anthropic's Claude Code mascot, and was replaced before merge: the
+mascot is Anthropic's trademark, and this is not an Anthropic site. The index
+h1 sits beside Pip in a terminal-style panel (accent frame, title cut into the
+top border).
 
 **Space scene.** Every page ends, below the colophon, with a full-bleed band
-(`SpaceScene.astro`, a claude.dev homage): Clawd in a box-drawing helmet
-(`<Clawd helmet />`, a second text layer in `--fg-secondary`) adrift among
-seeded, build-time dot-matrix planets (`·` `•` `●` in `--fg-disabled`) and gold
-`+` sparkles (`--accent-bright`). It's static, per the no-looping-decoration
-rule, and hovering it gives the same one-shot hop. It's `aria-hidden`: scenery
-past the content, nothing to announce. The planets paint as
-`content: attr(data-art)` rather than DOM text, because they're drawn below
-text contrast on purpose, and as text axe flags every `●`.
+(`SpaceScene.astro`): Pip under a stepped glass bell jar (`<Pip helmet />`, a
+second text layer in `--fg-secondary`) adrift among seeded, build-time
+dot-matrix planets (`·` `•` `●` in `--fg-disabled`) and gold `+` sparkles
+(`--accent-bright`). It's static, per the no-looping-decoration rule, and
+hovering it gives the same one-shot hop. It's `aria-hidden`: scenery past the
+content, nothing to announce. The planets paint as `content: attr(data-art)`
+rather than DOM text, because they're drawn below text contrast on purpose, and
+as text axe flags every `●`.
 
 | type | surface | what + why | upstream? |
 |------|---------|------------|-----------|
-| gap | font | **Block-glyph subset.** The bundled JetBrains Mono is a 229-glyph Latin subset with no U+2500–25FF (box drawing, block elements, geometric shapes), so Clawd, the `●` planets, and any `├──` tree in a code block rendered in the OS fallback mono and misaligned. `src/assets/fonts/jetbrains-mono-blocks.woff2` (3.4 KB, JetBrains Mono 2.304 Regular, OFL) extends the `"JetBrains Mono"` family via `unicode-range`. It is declared once per bundled weight: a face with a different weight descriptor is never consulted. Regenerate command in `global.css`. Retire when the package's subset includes U+2500–25FF. | yes |
+| gap | font | **Block-glyph subset.** The bundled JetBrains Mono is a 229-glyph Latin subset with no U+2500–25FF (box drawing, block elements, geometric shapes), so Pip, the `●` planets, and any `├──` tree in a code block rendered in the OS fallback mono and misaligned. `src/assets/fonts/jetbrains-mono-blocks.woff2` (3.4 KB, JetBrains Mono 2.304 Regular, OFL) extends the `"JetBrains Mono"` family via `unicode-range`. It is declared once per bundled weight: a face with a different weight descriptor is never consulted. Regenerate command in `global.css`. Retire when the package's subset includes U+2500–25FF. | yes |
 | extension | progress | **Reading-progress bar.** No system primitive exists. Blog-local, built only from existing tokens. | maybe |
-| extension | Clawd | **Block-glyph rendering recipe:** whole-pixel cells (20/15px), whole-pixel line pitch under the 1.32em glyph (26/19px), body letter/word spacing undone, and a `0.03em` same-color text stroke to close anti-alias seams. Recorded upstream in case the system ever documents ASCII/TUI art. | maybe |
+| extension | Pip | **Block-glyph rendering recipe:** whole-pixel cells (20/15px), whole-pixel line pitch under the 1.32em glyph (26/19px), body letter/word spacing undone, and a `0.03em` same-color text stroke to close anti-alias seams. Recorded upstream in case the system ever documents ASCII/TUI art. | maybe |
 
 **Filed upstream:** [`cameronsjo/artificer-design-system#523`](https://github.com/cameronsjo/artificer-design-system/issues/523).
 

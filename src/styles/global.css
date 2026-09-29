@@ -7,7 +7,7 @@
 
 /* Box drawing, block elements, and geometric shapes (U+2500–25FF) for
    "JetBrains Mono". The package's bundled JBM is a 229-glyph Latin subset
-   without them, so text art (Clawd, the footer's ● planets, `├──` trees in
+   without them, so text art (Pip, the footer's ● planets, `├──` trees in
    code) fell back to whatever mono the OS had — different advance widths and
    heights, so the art misaligned. This 3.4 KB
    subset of JetBrains Mono 2.304 Regular (OFL, src/assets/fonts/OFL.txt) extends
@@ -200,7 +200,7 @@ body::before {
 }
 
 /* ── Page lede — the quiet mono h1 on search / archive / tags (the index
-   uses the Clawd welcome panel instead). Mono, medium weight, secondary ink,
+   uses the Pip welcome panel instead). Mono, medium weight, secondary ink,
    comfortable measure. ──── */
 .hero {
   font-family: var(--font-mono);

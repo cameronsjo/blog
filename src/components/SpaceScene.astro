@@ -1,13 +1,13 @@
 ---
-// The page foot: Clawd in a space helmet, adrift among dot-matrix planets — a
-// homage to the Clawd at the bottom of claude.dev. Every mark is a character:
+// The page foot: Pip under a glass space helmet, adrift among dot-matrix
+// planets. Every mark is a character:
 // planets are grids of · • ● (ramped by a light from the top-left), stars are
 // scattered · . •, sparkles are gold +. Generated here at build time from a
 // fixed seed, so every page (and every build) draws the same sky.
 //
-// Static on purpose (Artificer: no looping decoration). Hover the sky and Clawd
-// hops, same one-shot state change as everywhere else he appears.
-import Clawd from './Clawd.astro';
+// Static on purpose (Artificer: no looping decoration). Hover the sky and Pip
+// hops, same one-shot state change as everywhere else it appears.
+import Pip from './Pip.astro';
 
 // mulberry32 — tiny seeded PRNG, so the sky is deterministic.
 function rng(seed: number) {
@@ -60,7 +60,7 @@ const PLANET = sphere(9, { seed: 7 });
 const PEBBLE = sphere(2, { seed: 11, craters: 0 });
 const MOON = sphere(5, { seed: 3, shadow: [0.55, -0.25, 1], craters: 0 });
 
-// Stars: seeded % positions, kept out of the box Clawd floats in.
+// Stars: seeded % positions, kept out of the box Pip floats in.
 const starRand = rng(29);
 const STAR_GLYPHS = ['·', '·', '·', '.', '•'];
 const stars: { x: number; y: number; glyph: string }[] = [];
@@ -76,7 +76,7 @@ while (stars.length < 44) {
 {/* Pure decoration past the end of the page's content, so it's hidden from
     assistive tech rather than described: nothing here informs, and the glyph
     dots are deliberately low-contrast scenery, not text to read. */}
-<div class="space clawd-host" aria-hidden="true">
+<div class="space pip-host" aria-hidden="true">
   {
     stars.map((s) => (
       <span class="space__star" style={`left: ${s.x}%; top: ${s.y}%`}>
@@ -89,8 +89,8 @@ while (stars.length < 44) {
   <span class="space__dots space__moon" data-art={MOON}></span>
   <span class="space__dots space__pebble" data-art={PEBBLE}></span>
   <span class="space__dots space__planet" data-art={PLANET}></span>
-  <div class="space__clawd">
-    <Clawd helmet />
+  <div class="space__pip">
+    <Pip helmet />
     <span class="space__spark space__spark--1">+</span>
     <span class="space__spark space__spark--2">+</span>
     <span class="space__spark space__spark--3">+</span>
@@ -99,7 +99,7 @@ while (stars.length < 44) {
 
 <style>
   /* Full-bleed band under the colophon. Overflow clips the big planet into the
-     bottom-right corner, the way the claude.dev one sinks off the page. */
+     bottom-right corner, so it sinks off the page. */
   .space {
     position: relative;
     z-index: var(--z-base);
@@ -147,17 +147,11 @@ while (stars.length < 44) {
     bottom: 5.5rem;
   }
 
-  .space__clawd {
+  .space__pip {
     position: absolute;
     left: 50%;
     top: 48%;
     transform: translate(-50%, -50%);
-  }
-  /* A size up from the default, still on whole pixels: 25px → 15px cells,
-     32px rows under 33px glyphs (20px / 26px on phones). */
-  .space__clawd :global(.clawd) {
-    font-size: 1.5625rem;
-    line-height: 2rem;
   }
   .space__spark {
     position: absolute;
@@ -181,10 +175,6 @@ while (stars.length < 44) {
   }
 
   @media (max-width: 480px) {
-    .space__clawd :global(.clawd) {
-      font-size: 1.25rem;
-      line-height: 1.625rem;
-    }
     .space__dots {
       font-size: 0.5rem;
     }
@@ -196,9 +186,12 @@ while (stars.length < 44) {
       right: -3rem;
       bottom: -3rem;
     }
+    /* Pip under glass is too tall to share the lower middle with it here;
+       the small moon moves to the empty bottom-left. */
     .space__pebble {
-      right: 9rem;
-      bottom: 3.5rem;
+      right: auto;
+      left: 10%;
+      bottom: 2.5rem;
     }
   }
 

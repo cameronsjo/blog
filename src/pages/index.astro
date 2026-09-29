@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
-import Clawd from '../components/Clawd.astro';
+import Pip from '../components/Pip.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { withBase } from '../utils';
 
@@ -17,11 +17,11 @@ const hasMore = allPosts.length > LATEST;
 ---
 
 <BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
-  {/* A Claude Code welcome-box homage: the accent-framed panel with a title
-      set into its top border, Clawd on the left, the tagline beside him. */}
-  <div class="welcome clawd-host reveal" style="--i: 0">
+  {/* A terminal-style welcome panel: accent frame with the title set into its
+      top border, Pip on the left, the tagline beside it. */}
+  <div class="welcome pip-host reveal" style="--i: 0">
     <p class="welcome__legend">{SITE_TITLE}</p>
-    <Clawd />
+    <Pip />
     <h1 class="welcome__title">{SITE_DESCRIPTION}</h1>
   </div>
   {
@@ -50,8 +50,8 @@ const hasMore = allPosts.length > LATEST;
 </BaseLayout>
 
 <style>
-  /* Border + Clawd both in --accent: Artificer's Claude Code theme maps the
-     welcome box (`claude`) and `clawd_body` to accent, so this is that screen. */
+  /* Frame and Pip both in --accent, the burnished gold of the wordmark's
+     full stop — the dot Pip grew from. */
   .welcome {
     position: relative;
     display: grid;
@@ -63,7 +63,7 @@ const hasMore = allPosts.length > LATEST;
     border: 1px solid var(--accent);
     border-radius: var(--radius-md);
   }
-  /* The title cut into the top border, like `╭─── Claude Code ───╮`. */
+  /* The title cut into the top border, like a TUI box: `╭─── title ───╮`. */
   .welcome__legend {
     position: absolute;
     top: 0;
@@ -79,7 +79,13 @@ const hasMore = allPosts.length > LATEST;
     color: var(--fg);
     word-spacing: normal;
   }
-  /* 1rem × 1.625 = 26px lines — the same pitch as Clawd's rows. */
+  /* Pip a size down in the panel so the box stays compact: 15px keeps
+     whole-pixel 9px cells, 19px rows under 19.8px glyphs. */
+  .welcome :global(.pip) {
+    font-size: 0.9375rem;
+    line-height: 1.1875rem;
+  }
+  /* 1rem × 1.625 = 26px lines — reads level beside Pip. */
   .welcome__title {
     margin: 0;
     max-width: 44ch;
@@ -101,8 +107,7 @@ const hasMore = allPosts.length > LATEST;
       font-size: 0.9375rem;
     }
   }
-  /* Too narrow to sit side by side: Clawd over the tagline, as in Claude
-     Code's full welcome screen. */
+  /* Too narrow to sit side by side: Pip over the tagline. */
   @media (max-width: 360px) {
     .welcome {
       grid-template-columns: 1fr;

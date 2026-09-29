@@ -1,17 +1,16 @@
 ---
-// Clawd, the Claude Code mascot, as the exact three rows of quadrant block
-// characters Claude Code prints in its welcome banner. Real text: it renders in
+// Pip — Artificer's critter. A burnished seed with a sprout: the gold full stop
+// from `artificer.` that took root and grew feet (a pip is both a dot and a
+// seed). Drawn as real text in quadrant block characters, so it renders in
 // JetBrains Mono (block glyphs come from the unicode-range subset declared in
-// global.css) and it copy-pastes back into a terminal intact.
+// global.css) and copy-pastes into a terminal intact.
 //
-// Colored --accent: Artificer's Claude Code theme maps `clawd_body` to accent,
-// so this is the same Clawd the terminal paints. Hover a `.clawd-host`
-// ancestor (or Clawd himself) and he hops once — a state change, not a loop.
+// Colored --accent — the same burnished gold as the wordmark's full stop. Hover
+// a `.pip-host` ancestor (or Pip) and it hops once — a state change, not a loop.
 //
-// `helmet` suits him up for space: a second text layer, stacked on the same
-// grid cell, draws a box-drawing fishbowl around his head whose bottom edge
-// crosses his body as the collar. Two layers because one character cell can
-// only hold one color.
+// `helmet` puts Pip under glass for space: a second text layer, stacked on the
+// same grid cell, draws a stepped bell jar over the seedling whose base crosses
+// just above the feet. Two layers because one character cell holds one color.
 interface Props {
   class?: string;
   helmet?: boolean;
@@ -19,25 +18,34 @@ interface Props {
 
 const { class: className, helmet = false } = Astro.props;
 
-const CLAWD = [' ▐▛███▜▌', '▝▜█████▛▘', '  ▘▘ ▝▝'];
+// 18×10 px, 2×2 px per glyph. Sprout (leaf + stem), round body, two dot eyes,
+// two feet.
+const PIP = ['   ▗▟▀', '   ▄▙▄', ' ▗█▜█▛█▖', ' ███████', ' ▝▜▛▀▜▛▘'];
 // Suited: one blank row above for the dome, one column in for the walls. The
 // blank row is a space, not '': HTML drops a newline right after <pre>, which
-// would pull the body up a row out from under the helmet.
-const BODY = helmet ? [' ', ...CLAWD.map((row) => ` ${row}`)] : CLAWD;
-const HELMET = ['╭───────╮', '│       │', '╰───────╯'].map((row) => ` ${row}`);
+// would pull the body up a row out from under the jar.
+const BODY = helmet ? [' ', ...PIP.map((row) => ` ${row}`)] : PIP;
+const HELMET = [
+  '  ╭─────╮',
+  ' ╭╯     ╰╮',
+  '╭╯       ╰╮',
+  '│         │',
+  '│         │',
+  '╰─────────╯',
+];
 
 const label = helmet
-  ? 'Clawd, the Claude Code mascot, in a space helmet, drawn in block characters'
-  : 'Clawd, the Claude Code mascot, drawn in block characters';
+  ? 'Pip, a seedling critter, under a glass space helmet, drawn in block characters'
+  : 'Pip, a seedling critter, drawn in block characters';
 ---
 
-<div class:list={['clawd', className]} role="img" aria-label={label}>
-  <pre class="clawd__layer clawd__body">{BODY.join('\n')}</pre>
-  {helmet && <pre class="clawd__layer clawd__helmet">{HELMET.join('\n')}</pre>}
+<div class:list={['pip', className]} role="img" aria-label={label}>
+  <pre class="pip__layer pip__body">{BODY.join('\n')}</pre>
+  {helmet && <pre class="pip__layer pip__helmet">{HELMET.join('\n')}</pre>}
 </div>
 
 <style>
-  .clawd {
+  .pip {
     display: inline-grid;
     /* 20px → 12px cells and 6px quadrants: whole pixels, so adjacent glyphs
        meet without anti-aliased seams. The block glyphs are 1.32em tall
@@ -47,7 +55,7 @@ const label = helmet
     font-size: 1.25rem;
     line-height: 1.625rem;
   }
-  .clawd__layer {
+  .pip__layer {
     grid-area: 1 / 1;
     margin: 0;
     padding: 0;
@@ -67,18 +75,18 @@ const label = helmet
        A same-color stroke this thin swells each glyph just past the seam. */
     -webkit-text-stroke: 0.03em currentColor;
   }
-  .clawd__body {
+  .pip__body {
     color: var(--accent);
   }
-  /* Later in the grid cell, so it paints over the body: the collar reads as a
-     band across him, not a line behind him. Box-drawing glyphs already overlap
+  /* Later in the grid cell, so it paints over the body: the jar's base reads as
+     a rim across Pip, not a line behind. Box-drawing glyphs already overlap
      their neighbors by design, so the seam stroke only beads their joins. */
-  .clawd__helmet {
+  .pip__helmet {
     color: var(--fg-secondary);
     -webkit-text-stroke: 0;
   }
 
-  @keyframes clawd-hop {
+  @keyframes pip-hop {
     0%,
     100% {
       transform: none;
@@ -87,20 +95,20 @@ const label = helmet
       transform: translateY(-0.35em);
     }
   }
-  .clawd:hover,
-  :global(.clawd-host:hover) .clawd {
-    animation: clawd-hop var(--dur-max) var(--ease);
+  .pip:hover,
+  :global(.pip-host:hover) .pip {
+    animation: pip-hop var(--dur-max) var(--ease);
   }
   @media (prefers-reduced-motion: reduce) {
-    .clawd:hover,
-    :global(.clawd-host:hover) .clawd {
+    .pip:hover,
+    :global(.pip-host:hover) .pip {
       animation: none;
     }
   }
 
   /* Phones: 15px keeps whole-pixel 9px cells; 19px rows under 19.8px glyphs. */
   @media (max-width: 480px) {
-    .clawd {
+    .pip {
       font-size: 0.9375rem;
       line-height: 1.1875rem;
     }
