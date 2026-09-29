@@ -7,10 +7,10 @@ Cameron Sjo's blog. Built with [Astro](https://astro.build), deployed to GitHub 
 - **View Transitions** + hover prefetch — SPA-style navigation, no full reloads
 - **Sticky header** with a **reading-progress bar** — on posts, the gold → purple
   top rule fills as you read the article
-- **Pip** — Artificer's critter: a burnished seed with a sprout (the gold
-  full stop that took root). It greets you in a terminal-style panel on the
-  index, and every page ends with Pip under a glass space helmet, adrift among
-  dot-matrix planets. All of it is text, drawn in block characters. Hover it.
+- **Sploot** — Artificer's critter, a Pembroke corgi in burnished gold. It
+  stands in a terminal-style panel on the index, and every page ends with
+  Sploot in a fishbowl space helmet, adrift among dot-matrix planets. All of it
+  is text, drawn in block characters. Hover it.
 - **Expressive Code** — fenced blocks get a framed, copyable, titled treatment
 - **Tags** (`/tags`, `/tags/<tag>`), a paginated **archive** (`/archive`), and
   **TOC** + heading anchors + reading time on posts
@@ -58,7 +58,7 @@ Store post images under `src/` (not `public/`) so `<Image>` optimizes them.
 | `src/content.config.ts` | Collection schema (Zod, incl. `heroImage`) |
 | `src/pages/` | Routes — index, about, posts, tags, archive, search, `rss.xml`, `robots.txt`, `llms.txt`, `og/` |
 | `src/layouts/` | `BaseLayout`, `PostLayout` |
-| `src/components/` | Head/SEO, header, reading progress, footer, post card, table of contents, `Pip`, `SpaceScene` |
+| `src/components/` | Head/SEO, header, reading progress, footer, post card, table of contents, `Sploot`, `SpaceScene` |
 | `src/plugins/` | `remark-reading-time` (frontmatter `minutesRead`) |
 | `src/styles/global.css` | Tailwind v4 + [Artificer](https://github.com/cameronsjo) design tokens |
 | `src/assets/fonts/` | 3.4 KB JetBrains Mono subset: box drawing, block elements, geometric shapes (U+2500–25FF), missing from the package's font |

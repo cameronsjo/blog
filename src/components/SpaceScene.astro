@@ -1,13 +1,14 @@
 ---
-// The page foot: Pip under a glass space helmet, adrift among dot-matrix
-// planets. Every mark is a character:
+// The page foot: Sploot the corgi in a fishbowl space helmet, adrift among
+// dot-matrix planets. Every mark is a character:
 // planets are grids of · • ● (ramped by a light from the top-left), stars are
 // scattered · . •, sparkles are gold +. Generated here at build time from a
 // fixed seed, so every page (and every build) draws the same sky.
 //
-// Static on purpose (Artificer: no looping decoration). Hover the sky and Pip
-// hops, same one-shot state change as everywhere else it appears.
-import Pip from './Pip.astro';
+// Static on purpose (Artificer: no looping decoration) — the drift is a fixed
+// tilt, not motion. Hover the sky and Sploot hops, same one-shot state change
+// as everywhere else it appears.
+import Sploot from './Sploot.astro';
 
 // mulberry32 — tiny seeded PRNG, so the sky is deterministic.
 function rng(seed: number) {
@@ -60,7 +61,7 @@ const PLANET = sphere(9, { seed: 7 });
 const PEBBLE = sphere(2, { seed: 11, craters: 0 });
 const MOON = sphere(5, { seed: 3, shadow: [0.55, -0.25, 1], craters: 0 });
 
-// Stars: seeded % positions, kept out of the box Pip floats in.
+// Stars: seeded % positions, kept out of the box Sploot floats in.
 const starRand = rng(29);
 const STAR_GLYPHS = ['·', '·', '·', '.', '•'];
 const stars: { x: number; y: number; glyph: string }[] = [];
@@ -68,7 +69,7 @@ while (stars.length < 44) {
   const x = starRand() * 100;
   const y = starRand() * 100;
   const glyph = STAR_GLYPHS[Math.floor(starRand() * STAR_GLYPHS.length)];
-  if (Math.abs(x - 50) < 18 && Math.abs(y - 48) < 26) continue;
+  if (Math.abs(x - 50) < 22 && Math.abs(y - 48) < 26) continue;
   stars.push({ x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10, glyph });
 }
 ---
@@ -76,7 +77,7 @@ while (stars.length < 44) {
 {/* Pure decoration past the end of the page's content, so it's hidden from
     assistive tech rather than described: nothing here informs, and the glyph
     dots are deliberately low-contrast scenery, not text to read. */}
-<div class="space pip-host" aria-hidden="true">
+<div class="space sploot-host" aria-hidden="true">
   {
     stars.map((s) => (
       <span class="space__star" style={`left: ${s.x}%; top: ${s.y}%`}>
@@ -89,8 +90,8 @@ while (stars.length < 44) {
   <span class="space__dots space__moon" data-art={MOON}></span>
   <span class="space__dots space__pebble" data-art={PEBBLE}></span>
   <span class="space__dots space__planet" data-art={PLANET}></span>
-  <div class="space__pip">
-    <Pip helmet />
+  <div class="space__sploot">
+    <Sploot helmet />
     <span class="space__spark space__spark--1">+</span>
     <span class="space__spark space__spark--2">+</span>
     <span class="space__spark space__spark--3">+</span>
@@ -147,11 +148,12 @@ while (stars.length < 44) {
     bottom: 5.5rem;
   }
 
-  .space__pip {
+  /* A fixed few degrees off level reads as adrift in zero-g without moving. */
+  .space__sploot {
     position: absolute;
     left: 50%;
     top: 48%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) rotate(-7deg);
   }
   .space__spark {
     position: absolute;
@@ -186,8 +188,8 @@ while (stars.length < 44) {
       right: -3rem;
       bottom: -3rem;
     }
-    /* Pip under glass is too tall to share the lower middle with it here;
-       the small moon moves to the empty bottom-left. */
+    /* Too tight to share the lower middle with Sploot here; the small moon
+       moves to the empty bottom-left. */
     .space__pebble {
       right: auto;
       left: 10%;

@@ -1,0 +1,117 @@
+---
+// Sploot — Artificer's critter: a Pembroke corgi, named for the flat-out,
+// back-legs-behind lounge corgis are famous for. Long, low, big-eared, and
+// gold — --accent, the same burnished gold as the wordmark's full stop and
+// about the color of a Pembroke's coat. A herding dog for a system whose job is
+// keeping every site in one flock; in Welsh legend corgis were fairy steeds,
+// which suits an artificer's workshop.
+//
+// Drawn as real text in quadrant block characters (an original 30×8 px sprite,
+// 2×2 px per glyph), so it renders in JetBrains Mono (block glyphs come from
+// the unicode-range subset declared in global.css) and copy-pastes into a
+// terminal intact. Hover a `.sploot-host` ancestor (or Sploot) and it hops
+// once — a state change, not a loop.
+//
+// `helmet` suits Sploot up for space: a second text layer, stacked on the same
+// grid cell, draws a fishbowl over the head whose base rings the neck. Two
+// layers because one character cell holds one color.
+interface Props {
+  class?: string;
+  helmet?: boolean;
+}
+
+const { class: className, helmet = false } = Astro.props;
+
+// Ears, fox snout, eye, long loaf, fluffy rump, four stubby legs.
+const SPLOOT = ['         ▗▙▗▙', '▗▄▄▄▄▄▄▄▄▟▛██▄', '█████████████▀▀', '▝▜▛▜▛▀▀▀▀▜▛▜▖'];
+// Suited: one blank row above for the dome. The blank row is a space, not '':
+// HTML drops a newline right after <pre>, which would pull the body up a row
+// out from under the helmet.
+const BODY = helmet ? [' ', ...SPLOOT] : SPLOOT;
+const HELMET = [
+  '        ╭──────╮',
+  '        │      │',
+  '        │      │',
+  '        ╰──────╯',
+];
+
+const label = helmet
+  ? 'Sploot, a corgi, in a fishbowl space helmet, drawn in block characters'
+  : 'Sploot, a corgi, drawn in block characters';
+---
+
+<div class:list={['sploot', className]} role="img" aria-label={label}>
+  <pre class="sploot__layer sploot__body">{BODY.join('\n')}</pre>
+  {helmet && <pre class="sploot__layer sploot__helmet">{HELMET.join('\n')}</pre>}
+</div>
+
+<style>
+  .sploot {
+    display: inline-grid;
+    /* 20px → 12px cells and 6px quadrants: whole pixels, so adjacent glyphs
+       meet without anti-aliased seams. The block glyphs are 1.32em tall
+       (26.4px); a whole-pixel 26px line pitch overlaps rows by a hair. A
+       fractional pitch lets baseline snapping alternate 19/20px and open a
+       hairline between rows, so both sizes pin line-height to whole pixels. */
+    font-size: 1.25rem;
+    line-height: 1.625rem;
+  }
+  .sploot__layer {
+    grid-area: 1 / 1;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    background: none;
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: inherit;
+    line-height: inherit;
+    /* The page's body letter/word spacing would pry the glyphs apart. */
+    letter-spacing: 0;
+    word-spacing: normal;
+    font-kerning: none;
+    font-variant-ligatures: none;
+    /* Where two glyphs' anti-aliased edges meet, their partial coverages don't
+       add up to a solid pixel, leaving hairline seams (worst on light ground).
+       A same-color stroke this thin swells each glyph just past the seam. */
+    -webkit-text-stroke: 0.03em currentColor;
+  }
+  .sploot__body {
+    color: var(--accent);
+  }
+  /* Later in the grid cell, so it paints over the body: the neck ring reads as
+     a collar across Sploot, not a line behind. Box-drawing glyphs already
+     overlap their neighbors by design, so the seam stroke only beads joins. */
+  .sploot__helmet {
+    color: var(--fg-secondary);
+    -webkit-text-stroke: 0;
+  }
+
+  @keyframes sploot-hop {
+    0%,
+    100% {
+      transform: none;
+    }
+    45% {
+      transform: translateY(-0.35em);
+    }
+  }
+  .sploot:hover,
+  :global(.sploot-host:hover) .sploot {
+    animation: sploot-hop var(--dur-max) var(--ease);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sploot:hover,
+    :global(.sploot-host:hover) .sploot {
+      animation: none;
+    }
+  }
+
+  /* Phones: 15px keeps whole-pixel 9px cells; 19px rows under 19.8px glyphs. */
+  @media (max-width: 480px) {
+    .sploot {
+      font-size: 0.9375rem;
+      line-height: 1.1875rem;
+    }
+  }
+</style>
