@@ -34,7 +34,10 @@ const hasMore = allPosts.length > LATEST;
         ))}
       </ol>
     ) : (
-      <p style="color: var(--fg-secondary)">No posts yet.</p>
+      <div class="sploot-note sploot-host reveal" style="--i: 1">
+        <Sploot pose="sleep" />
+        <p>No posts yet.</p>
+      </div>
     )
   }
   {

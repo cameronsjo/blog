@@ -7,10 +7,15 @@ Cameron Sjo's blog. Built with [Astro](https://astro.build), deployed to GitHub 
 - **View Transitions** + hover prefetch — SPA-style navigation, no full reloads
 - **Sticky header** with a **reading-progress bar** — on posts, the gold → purple
   top rule fills as you read the article
-- **Sploot** — Artificer's critter, a Pembroke corgi in burnished gold. It
-  stands in a terminal-style panel on the index, and every page ends with
-  Sploot in a fishbowl space helmet, adrift among dot-matrix planets. All of it
-  is text, drawn in block characters. Hover it.
+- **Sploot** — Artificer's critter, a Pembroke corgi in burnished gold, drawn
+  in block characters from pixel grids in `src/lib/sploot.ts`. Hover it.
+  - stands in a terminal-style panel on the index;
+  - ends every page in a fishbowl space helmet, adrift among dot-matrix planets;
+  - trots down the table of contents, which becomes a sticky side rail on wide
+    screens, to the section you're reading;
+  - sleeps on empty pages and sniffs around the 404;
+  - wears a purple scarf December through February;
+  - is the favicon.
 - **Expressive Code** — fenced blocks get a framed, copyable, titled treatment
 - **Tags** (`/tags`, `/tags/<tag>`), a paginated **archive** (`/archive`), and
   **TOC** + heading anchors + reading time on posts
@@ -56,9 +61,10 @@ Store post images under `src/` (not `public/`) so `<Image>` optimizes them.
 |------|---------|
 | `src/content/blog/` | Posts (Markdown / MDX) |
 | `src/content.config.ts` | Collection schema (Zod, incl. `heroImage`) |
-| `src/pages/` | Routes — index, about, posts, tags, archive, search, `rss.xml`, `robots.txt`, `llms.txt`, `og/` |
+| `src/pages/` | Routes — index, about, posts, tags, archive, search, 404, `rss.xml`, `robots.txt`, `llms.txt`, `og/` |
 | `src/layouts/` | `BaseLayout`, `PostLayout` |
-| `src/components/` | Head/SEO, header, reading progress, footer, post card, table of contents, `Sploot`, `SpaceScene` |
+| `src/components/` | Head/SEO, header, reading progress, footer, post card, table of contents (+ Sploot walker), `Sploot`, `SpaceScene` |
+| `src/lib/sploot.ts` | Sploot's poses as pixel grids, and the grid → block-glyph converter |
 | `src/plugins/` | `remark-reading-time` (frontmatter `minutesRead`) |
 | `src/styles/global.css` | Tailwind v4 + [Artificer](https://github.com/cameronsjo) design tokens |
 | `src/assets/fonts/` | 3.4 KB JetBrains Mono subset: box drawing, block elements, geometric shapes (U+2500–25FF), missing from the package's font |

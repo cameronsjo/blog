@@ -215,6 +215,19 @@ body::before {
   text-wrap: balance;
 }
 
+/* ── Sploot notes — empty states and the 404: the critter in a pose, then
+   the literal line. Sploot carries the mood; the copy never does. ──────── */
+.sploot-note {
+  display: grid;
+  justify-items: start;
+  gap: var(--s-md);
+  margin: var(--s-lg) 0 var(--s-2xl);
+  color: var(--fg-secondary);
+}
+.sploot-note p {
+  margin: 0;
+}
+
 /* ── Editorial index entries — asymmetric number/date rail | title/desc ── */
 .entries {
   border-bottom: 1px solid var(--border);

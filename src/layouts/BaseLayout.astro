@@ -69,6 +69,21 @@ const CF_BEACON_TOKEN = '9db7302de886402680e0838d0f35f7db';
         }
         document.documentElement.setAttribute('data-theme', initial);
 
+        // Season, from the reader's own clock (northern hemisphere), set
+        // pre-paint so seasonal touches never flash in. Sploot wears a scarf
+        // in winter. <html> persists across View Transitions, so once is enough.
+        var month = new Date().getMonth();
+        document.documentElement.setAttribute(
+          'data-season',
+          month === 11 || month <= 1
+            ? 'winter'
+            : month <= 4
+              ? 'spring'
+              : month <= 7
+                ? 'summer'
+                : 'autumn',
+        );
+
         function apply(next) {
           document.documentElement.setAttribute('data-theme', next);
           try {

@@ -46,10 +46,28 @@ hop. It's `aria-hidden`: scenery past the content, nothing to announce. The
 planets paint as `content: attr(data-art)` rather than DOM text, because
 they're drawn below text contrast on purpose, and as text axe flags every `●`.
 
+**Sploot around the site.** Every pose is a pixel grid in `src/lib/sploot.ts`,
+converted to glyphs at build time:
+- **Table of contents.** On wide screens (≥ 75rem) the TOC leaves the column
+  for a sticky rail in the left margin. A scroll-spy sets
+  `aria-current="location"` on the current section's link (accent + bold, not
+  color alone), and a mini Sploot (`aria-hidden`) moves beside it in the
+  gutter, a `--dur-max` transition. On narrow screens the TOC stays in the
+  column with the same highlight and no walker. Entries no longer end in the
+  autolink `#` that Astro's heading text picked up.
+- **Empty states** (no posts, no tags) show Sploot asleep with z's.
+- **The new `404.astro`** shows Sploot sniffing, with literal copy (what's
+  missing, why, where to go).
+- **Winter scarf.** The pre-paint script sets `<html data-season>` from the
+  reader's clock, and December–February shows a `--brand-purple` scarf layer.
+- **Favicon.** Sploot's head in profile. A favicon can't read page tokens, so
+  it carries the dark bg and accent hexes.
+
 | type | surface | what + why | upstream? |
 |------|---------|------------|-----------|
 | gap | font | **Block-glyph subset.** The bundled JetBrains Mono is a 229-glyph Latin subset with no U+2500–25FF (box drawing, block elements, geometric shapes), so Sploot, the `●` planets, and any `├──` tree in a code block rendered in the OS fallback mono and misaligned. `src/assets/fonts/jetbrains-mono-blocks.woff2` (3.4 KB, JetBrains Mono 2.304 Regular, OFL) extends the `"JetBrains Mono"` family via `unicode-range`. It is declared once per bundled weight: a face with a different weight descriptor is never consulted. Regenerate command in `global.css`. Retire when the package's subset includes U+2500–25FF. | yes |
 | extension | progress | **Reading-progress bar.** No system primitive exists. Blog-local, built only from existing tokens. | maybe |
+| extension | toc | **TOC rail + scroll-spy.** Sticky side rail on wide screens with `aria-current="location"` tracking; no system TOC primitive exists. | maybe |
 | extension | Sploot | **Block-glyph rendering recipe:** whole-pixel cells (20/15px), whole-pixel line pitch under the 1.32em glyph (26/19px), body letter/word spacing undone, and a `0.03em` same-color text stroke to close anti-alias seams. Recorded upstream in case the system ever documents ASCII/TUI art. | maybe |
 
 **Filed upstream:** [`cameronsjo/artificer-design-system#523`](https://github.com/cameronsjo/artificer-design-system/issues/523) (font gap, progress bar, text-art recipe) and [`#524`](https://github.com/cameronsjo/artificer-design-system/issues/524) (Sploot, proposed for § Brand).

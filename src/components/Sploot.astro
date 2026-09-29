@@ -6,28 +6,42 @@
 // keeping every site in one flock; in Welsh legend corgis were fairy steeds,
 // which suits an artificer's workshop.
 //
-// Drawn as real text in quadrant block characters (an original 30×8 px sprite,
-// 2×2 px per glyph), so it renders in JetBrains Mono (block glyphs come from
-// the unicode-range subset declared in global.css) and copy-pastes into a
-// terminal intact. Hover a `.sploot-host` ancestor (or Sploot) and it hops
-// once — a state change, not a loop.
+// Drawn as real text: the pixel grids in src/lib/sploot.ts become quadrant
+// block glyphs (2×2 px per character) at build time, rendered in JetBrains Mono
+// (block glyphs come from the unicode-range subset declared in global.css).
+// Hover a `.sploot-host` ancestor (or Sploot) and it hops once — a state
+// change, not a loop.
 //
-// `helmet` suits Sploot up for space: a second text layer, stacked on the same
-// grid cell, draws a fishbowl over the head whose base rings the neck. Two
-// layers because one character cell holds one color.
+// Extra marks ride their own text layers, stacked on the same grid cell,
+// because one character cell holds one color:
+//   helmet  a fishbowl over the head whose base rings the neck (space)
+//   scarf   `stand` only, in --brand-purple; shown December–February, when the
+//           pre-paint script in BaseLayout sets <html data-season="winter">
+//   z z     `sleep`;  scent dots  `sniff`
+import { POSES, SCARF, toGlyphs, type Pose } from '../lib/sploot';
+
 interface Props {
   class?: string;
+  pose?: Pose;
   helmet?: boolean;
+  // Hide from assistive tech when something else already carries the meaning
+  // (the TOC walker marks a link that has aria-current).
+  decorative?: boolean;
 }
 
-const { class: className, helmet = false } = Astro.props;
+const { class: className, pose = 'stand', helmet = false, decorative = false } = Astro.props;
 
-// Ears, fox snout, eye, long loaf, fluffy rump, four stubby legs.
-const SPLOOT = ['         ▗▙▗▙', '▗▄▄▄▄▄▄▄▄▟▛██▄', '█████████████▀▀', '▝▜▛▜▛▀▀▀▀▜▛▜▖'];
-// Suited: one blank row above for the dome. The blank row is a space, not '':
-// HTML drops a newline right after <pre>, which would pull the body up a row
-// out from under the helmet.
-const BODY = helmet ? [' ', ...SPLOOT] : SPLOOT;
+const OVERLAYS: Partial<Record<Pose, { cls: string; rows: string[] }>> = {
+  stand: { cls: 'sploot__scarf', rows: toGlyphs(SCARF) },
+  sleep: { cls: 'sploot__zzz', rows: ['              z', '                z'] },
+  sniff: { cls: 'sploot__scent', rows: [' ', ' ', ' ', '               · ·'] },
+};
+
+// Suited: every layer drops one row to make room for the dome. The blank row
+// is a space, not '': HTML drops a newline right after <pre>.
+const lift = (rows: string[]) => (helmet ? [' ', ...rows] : rows);
+const body = lift(toGlyphs(POSES[pose]));
+const overlay = OVERLAYS[pose];
 const HELMET = [
   '        ╭──────╮',
   '        │      │',
@@ -35,13 +49,24 @@ const HELMET = [
   '        ╰──────╯',
 ];
 
-const label = helmet
-  ? 'Sploot, a corgi, in a fishbowl space helmet, drawn in block characters'
-  : 'Sploot, a corgi, drawn in block characters';
+const DESCRIBE: Record<Pose, string> = {
+  stand: 'Sploot the corgi',
+  droopy: 'Sploot the corgi, ears drooping',
+  sleep: 'Sploot the corgi, asleep',
+  sniff: 'Sploot the corgi, sniffing the ground',
+  mini: 'Sploot the corgi',
+};
+const label = `${DESCRIBE[pose]}${helmet ? ', in a fishbowl space helmet' : ''}, drawn in block characters`;
 ---
 
-<div class:list={['sploot', className]} role="img" aria-label={label}>
-  <pre class="sploot__layer sploot__body">{BODY.join('\n')}</pre>
+<div
+  class:list={['sploot', { 'sploot--mini': pose === 'mini' }, className]}
+  role={decorative ? undefined : 'img'}
+  aria-label={decorative ? undefined : label}
+  aria-hidden={decorative ? 'true' : undefined}
+>
+  <pre class="sploot__layer sploot__body">{body.join('\n')}</pre>
+  {overlay && <pre class:list={['sploot__layer', overlay.cls]}>{lift(overlay.rows).join('\n')}</pre>}
   {helmet && <pre class="sploot__layer sploot__helmet">{HELMET.join('\n')}</pre>}
 </div>
 
@@ -52,9 +77,14 @@ const label = helmet
        meet without anti-aliased seams. The block glyphs are 1.32em tall
        (26.4px); a whole-pixel 26px line pitch overlaps rows by a hair. A
        fractional pitch lets baseline snapping alternate 19/20px and open a
-       hairline between rows, so both sizes pin line-height to whole pixels. */
+       hairline between rows, so every size pins line-height to whole pixels. */
     font-size: 1.25rem;
     line-height: 1.625rem;
+  }
+  /* 10px → 6px cells, 13px rows under 13.2px glyphs. */
+  .sploot--mini {
+    font-size: 0.625rem;
+    line-height: 0.8125rem;
   }
   .sploot__layer {
     grid-area: 1 / 1;
@@ -79,12 +109,24 @@ const label = helmet
   .sploot__body {
     color: var(--accent);
   }
-  /* Later in the grid cell, so it paints over the body: the neck ring reads as
-     a collar across Sploot, not a line behind. Box-drawing glyphs already
-     overlap their neighbors by design, so the seam stroke only beads joins. */
-  .sploot__helmet {
-    color: var(--fg-secondary);
+  /* Later layers paint over the body. Text overlays (z, scent, box drawing)
+     don't tile, so they skip the seam stroke. */
+  .sploot__helmet,
+  .sploot__zzz,
+  .sploot__scent {
     -webkit-text-stroke: 0;
+  }
+  .sploot__helmet,
+  .sploot__zzz,
+  .sploot__scent {
+    color: var(--fg-secondary);
+  }
+  .sploot__scarf {
+    display: none;
+    color: var(--brand-purple);
+  }
+  :global(:root[data-season='winter']) .sploot__scarf {
+    display: block;
   }
 
   @keyframes sploot-hop {
@@ -109,7 +151,7 @@ const label = helmet
 
   /* Phones: 15px keeps whole-pixel 9px cells; 19px rows under 19.8px glyphs. */
   @media (max-width: 480px) {
-    .sploot {
+    .sploot:not(.sploot--mini) {
       font-size: 0.9375rem;
       line-height: 1.1875rem;
     }
