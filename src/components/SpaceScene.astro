@@ -1,0 +1,205 @@
+---
+// The page foot: Sploot the corgi in a fishbowl space helmet, adrift among
+// dot-matrix planets. Every mark is a character:
+// planets are grids of · • ● (ramped by a light from the top-left), stars are
+// scattered · . •, sparkles are gold +. Generated here at build time from a
+// fixed seed, so every page (and every build) draws the same sky.
+//
+// Static on purpose (Artificer: no looping decoration) — the drift is a fixed
+// tilt, not motion. Hover the sky and Sploot hops, same one-shot state change
+// as everywhere else it appears.
+import Sploot from './Sploot.astro';
+
+// mulberry32 — tiny seeded PRNG, so the sky is deterministic.
+function rng(seed: number) {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+interface SphereOptions {
+  seed: number;
+  // [x, y, r] of a shadow disc (in radii), cut out to make a crescent.
+  shadow?: [number, number, number];
+  // Chance an interior cell is a big dot — scattered craters.
+  craters?: number;
+}
+
+// A dot-matrix sphere on a square grid (CSS sets an equal row/column pitch).
+// Light comes from the top-left: the lit rim takes the big dots, the far rim
+// medium ones, and the face a sparse grid of small ones.
+function sphere(r: number, { seed, shadow, craters = 0.06 }: SphereOptions) {
+  const rand = rng(seed);
+  const rows: string[] = [];
+  for (let y = -r; y <= r; y++) {
+    let row = '';
+    for (let x = -r; x <= r; x++) {
+      const d = Math.hypot(x, y) / (r + 0.35);
+      const shaded =
+        shadow && Math.hypot(x - shadow[0] * r, y - shadow[1] * r) / (shadow[2] * r + 0.35) < 1;
+      if (d > 1 || shaded) {
+        row += ' ';
+        continue;
+      }
+      const lit = -(x + y) / (Math.SQRT2 * r); // -1 dark … 1 lit
+      const n = rand();
+      if (d > 0.82) row += lit > -0.2 ? (n < 0.75 ? '●' : '•') : n < 0.6 ? '•' : '·';
+      else if (n < craters) row += '●';
+      else if (lit > 0.35) row += n < 0.55 ? '•' : '·';
+      else row += n < 0.8 ? '·' : ' ';
+    }
+    rows.push(row.trimEnd());
+  }
+  return rows.join('\n');
+}
+
+const PLANET = sphere(9, { seed: 7 });
+const PEBBLE = sphere(2, { seed: 11, craters: 0 });
+const MOON = sphere(5, { seed: 3, shadow: [0.55, -0.25, 1], craters: 0 });
+
+// Stars: seeded % positions, kept out of the box Sploot floats in.
+const starRand = rng(29);
+const STAR_GLYPHS = ['·', '·', '·', '.', '•'];
+const stars: { x: number; y: number; glyph: string }[] = [];
+while (stars.length < 44) {
+  const x = starRand() * 100;
+  const y = starRand() * 100;
+  const glyph = STAR_GLYPHS[Math.floor(starRand() * STAR_GLYPHS.length)];
+  if (Math.abs(x - 50) < 22 && Math.abs(y - 48) < 26) continue;
+  stars.push({ x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10, glyph });
+}
+---
+
+{/* Pure decoration past the end of the page's content, so it's hidden from
+    assistive tech rather than described: nothing here informs, and the glyph
+    dots are deliberately low-contrast scenery, not text to read. */}
+<div class="space sploot-host" aria-hidden="true">
+  {
+    stars.map((s) => (
+      <span class="space__star" style={`left: ${s.x}%; top: ${s.y}%`}>
+        {s.glyph}
+      </span>
+    ))
+  }
+  {/* Planet art rides in data-art and paints via ::before — decorative
+      glyphs as generated content, not page text (see .space__dots). */}
+  <span class="space__dots space__moon" data-art={MOON}></span>
+  <span class="space__dots space__pebble" data-art={PEBBLE}></span>
+  <span class="space__dots space__planet" data-art={PLANET}></span>
+  <div class="space__sploot">
+    <Sploot helmet />
+    <span class="space__spark space__spark--1">+</span>
+    <span class="space__spark space__spark--2">+</span>
+    <span class="space__spark space__spark--3">+</span>
+  </div>
+</div>
+
+<style>
+  /* Full-bleed band under the colophon. Overflow clips the big planet into the
+     bottom-right corner, so it sinks off the page. */
+  .space {
+    position: relative;
+    z-index: var(--z-base);
+    height: clamp(18rem, 40vw, 24rem);
+    overflow: hidden;
+    color: var(--fg-disabled);
+    font-family: var(--font-mono);
+    letter-spacing: 0;
+    word-spacing: normal;
+    user-select: none;
+  }
+
+  .space__star {
+    position: absolute;
+    font-size: var(--t-label-md-size);
+    line-height: 1;
+  }
+
+  /* Dot matrices: letter-spacing tops the 0.6em advance up to a 1em pitch,
+     and line-height matches it, so the grid is square and the spheres round.
+     The art is generated content (`content: attr(data-art)`), not DOM text:
+     it's scenery drawn dim on purpose, and as text a contrast checker reads
+     every ● as a sentence it can't read. The scene is aria-hidden, so the
+     generated content is hidden with it. */
+  .space__dots {
+    position: absolute;
+    font-size: 0.6875rem;
+    line-height: 1;
+    letter-spacing: 0.4em;
+    white-space: pre;
+  }
+  .space__dots::before {
+    content: attr(data-art);
+  }
+  .space__moon {
+    left: 5%;
+    top: 12%;
+  }
+  .space__planet {
+    right: -4.5rem;
+    bottom: -4.5rem;
+  }
+  .space__pebble {
+    right: 13rem;
+    bottom: 5.5rem;
+  }
+
+  /* A fixed few degrees off level reads as adrift in zero-g without moving. */
+  .space__sploot {
+    position: absolute;
+    left: 50%;
+    top: 48%;
+    transform: translate(-50%, -50%) rotate(-7deg);
+  }
+  .space__spark {
+    position: absolute;
+    color: var(--accent-bright);
+    font-size: var(--t-label-md-size);
+    font-weight: 700;
+    line-height: 1;
+  }
+  .space__spark--1 {
+    left: -1.75em;
+    top: 58%;
+  }
+  .space__spark--2 {
+    right: -1.25em;
+    top: 12%;
+    font-size: var(--t-label-sm-size);
+  }
+  .space__spark--3 {
+    right: 0;
+    bottom: -1.5em;
+  }
+
+  @media (max-width: 480px) {
+    .space__dots {
+      font-size: 0.5rem;
+    }
+    .space__moon {
+      left: 4%;
+      top: 8%;
+    }
+    .space__planet {
+      right: -3rem;
+      bottom: -3rem;
+    }
+    /* Too tight to share the lower middle with Sploot here; the small moon
+       moves to the empty bottom-left. */
+    .space__pebble {
+      right: auto;
+      left: 10%;
+      bottom: 2.5rem;
+    }
+  }
+
+  @media print {
+    .space {
+      display: none;
+    }
+  }
+</style>

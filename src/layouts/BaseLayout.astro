@@ -3,6 +3,8 @@ import { ClientRouter } from 'astro:transitions';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import ReadingProgress from '../components/ReadingProgress.astro';
+import SpaceScene from '../components/SpaceScene.astro';
 import '@cameronsjo/artificer/artificer.css';
 import '@cameronsjo/artificer/whimsy.css';
 import '../styles/global.css';
@@ -14,9 +16,12 @@ interface Props {
   updatedDate?: Date;
   ogImage?: string;
   tags?: string[];
+  // Turns the top rule into a reading-progress bar (posts). The page marks what
+  // counts as "the read" with [data-progress-target].
+  progress?: boolean;
 }
 
-const { title, description, pubDate, updatedDate, ogImage, tags } = Astro.props;
+const { title, description, pubDate, updatedDate, ogImage, tags, progress = false } = Astro.props;
 
 // Cloudflare Web Analytics — cookieless manual beacon. One CF site/token for
 // cameronsjo.github.io covers the root, /blog, and /agentic-harnesses (CF Web
@@ -64,6 +69,21 @@ const CF_BEACON_TOKEN = '9db7302de886402680e0838d0f35f7db';
         }
         document.documentElement.setAttribute('data-theme', initial);
 
+        // Season, from the reader's own clock (northern hemisphere), set
+        // pre-paint so seasonal touches never flash in. Sploot wears a scarf
+        // in winter. <html> persists across View Transitions, so once is enough.
+        var month = new Date().getMonth();
+        document.documentElement.setAttribute(
+          'data-season',
+          month === 11 || month <= 1
+            ? 'winter'
+            : month <= 4
+              ? 'spring'
+              : month <= 7
+                ? 'summer'
+                : 'autumn',
+        );
+
         function apply(next) {
           document.documentElement.setAttribute('data-theme', next);
           try {
@@ -107,13 +127,17 @@ const CF_BEACON_TOKEN = '9db7302de886402680e0838d0f35f7db';
     </script>
   </head>
   <body>
-    <div class="topline" aria-hidden="true"></div>
-    <div class="shell mx-auto flex min-h-screen max-w-2xl flex-col px-5">
-      <Header />
-      <main class="flex-1 py-10">
-        <slot />
-      </main>
-      <Footer />
+    <ReadingProgress progress={progress} />
+    <div class="flex min-h-screen flex-col">
+      <div class="shell mx-auto flex w-full max-w-2xl flex-1 flex-col px-5">
+        <Header />
+        <main class="flex-1 py-10">
+          <slot />
+        </main>
+        <Footer />
+      </div>
+      {/* Full-bleed, below the colophon — Sploot adrift at the page foot. */}
+      <SpaceScene />
     </div>
     <script
       is:inline

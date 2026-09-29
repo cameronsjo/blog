@@ -1,0 +1,159 @@
+---
+// Sploot — Artificer's critter: a Pembroke corgi, named for the flat-out,
+// back-legs-behind lounge corgis are famous for. Long, low, big-eared, and
+// gold — --accent, the same burnished gold as the wordmark's full stop and
+// about the color of a Pembroke's coat. A herding dog for a system whose job is
+// keeping every site in one flock; in Welsh legend corgis were fairy steeds,
+// which suits an artificer's workshop.
+//
+// Drawn as real text: the pixel grids in src/lib/sploot.ts become quadrant
+// block glyphs (2×2 px per character) at build time, rendered in JetBrains Mono
+// (block glyphs come from the unicode-range subset declared in global.css).
+// Hover a `.sploot-host` ancestor (or Sploot) and it hops once — a state
+// change, not a loop.
+//
+// Extra marks ride their own text layers, stacked on the same grid cell,
+// because one character cell holds one color:
+//   helmet  a fishbowl over the head whose base rings the neck (space)
+//   scarf   `stand` only, in --brand-purple; shown December–February, when the
+//           pre-paint script in BaseLayout sets <html data-season="winter">
+//   z z     `sleep`;  scent dots  `sniff`
+import { POSES, SCARF, toGlyphs, type Pose } from '../lib/sploot';
+
+interface Props {
+  class?: string;
+  pose?: Pose;
+  helmet?: boolean;
+  // Hide from assistive tech when something else already carries the meaning
+  // (the TOC walker marks a link that has aria-current).
+  decorative?: boolean;
+}
+
+const { class: className, pose = 'stand', helmet = false, decorative = false } = Astro.props;
+
+const OVERLAYS: Partial<Record<Pose, { cls: string; rows: string[] }>> = {
+  stand: { cls: 'sploot__scarf', rows: toGlyphs(SCARF) },
+  sleep: { cls: 'sploot__zzz', rows: ['              z', '                z'] },
+  sniff: { cls: 'sploot__scent', rows: [' ', ' ', ' ', '               · ·'] },
+};
+
+// Suited: every layer drops one row to make room for the dome. The blank row
+// is a space, not '': HTML drops a newline right after <pre>.
+const lift = (rows: string[]) => (helmet ? [' ', ...rows] : rows);
+const body = lift(toGlyphs(POSES[pose]));
+const overlay = OVERLAYS[pose];
+const HELMET = [
+  '        ╭──────╮',
+  '        │      │',
+  '        │      │',
+  '        ╰──────╯',
+];
+
+const DESCRIBE: Record<Pose, string> = {
+  stand: 'Sploot the corgi',
+  droopy: 'Sploot the corgi, ears drooping',
+  sleep: 'Sploot the corgi, asleep',
+  sniff: 'Sploot the corgi, sniffing the ground',
+  mini: 'Sploot the corgi',
+};
+const label = `${DESCRIBE[pose]}${helmet ? ', in a fishbowl space helmet' : ''}, drawn in block characters`;
+---
+
+<div
+  class:list={['sploot', { 'sploot--mini': pose === 'mini' }, className]}
+  role={decorative ? undefined : 'img'}
+  aria-label={decorative ? undefined : label}
+  aria-hidden={decorative ? 'true' : undefined}
+>
+  <pre class="sploot__layer sploot__body">{body.join('\n')}</pre>
+  {overlay && <pre class:list={['sploot__layer', overlay.cls]}>{lift(overlay.rows).join('\n')}</pre>}
+  {helmet && <pre class="sploot__layer sploot__helmet">{HELMET.join('\n')}</pre>}
+</div>
+
+<style>
+  .sploot {
+    display: inline-grid;
+    /* 20px → 12px cells and 6px quadrants: whole pixels, so adjacent glyphs
+       meet without anti-aliased seams. The block glyphs are 1.32em tall
+       (26.4px); a whole-pixel 26px line pitch overlaps rows by a hair. A
+       fractional pitch lets baseline snapping alternate 19/20px and open a
+       hairline between rows, so every size pins line-height to whole pixels. */
+    font-size: 1.25rem;
+    line-height: 1.625rem;
+  }
+  /* 10px → 6px cells, 13px rows under 13.2px glyphs. */
+  .sploot--mini {
+    font-size: 0.625rem;
+    line-height: 0.8125rem;
+  }
+  .sploot__layer {
+    grid-area: 1 / 1;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    background: none;
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: inherit;
+    line-height: inherit;
+    /* The page's body letter/word spacing would pry the glyphs apart. */
+    letter-spacing: 0;
+    word-spacing: normal;
+    font-kerning: none;
+    font-variant-ligatures: none;
+    /* Where two glyphs' anti-aliased edges meet, their partial coverages don't
+       add up to a solid pixel, leaving hairline seams (worst on light ground).
+       A same-color stroke this thin swells each glyph just past the seam. */
+    -webkit-text-stroke: 0.03em currentColor;
+  }
+  .sploot__body {
+    color: var(--accent);
+  }
+  /* Later layers paint over the body. Text overlays (z, scent, box drawing)
+     don't tile, so they skip the seam stroke. */
+  .sploot__helmet,
+  .sploot__zzz,
+  .sploot__scent {
+    -webkit-text-stroke: 0;
+  }
+  .sploot__helmet,
+  .sploot__zzz,
+  .sploot__scent {
+    color: var(--fg-secondary);
+  }
+  .sploot__scarf {
+    display: none;
+    color: var(--brand-purple);
+  }
+  :global(:root[data-season='winter']) .sploot__scarf {
+    display: block;
+  }
+
+  @keyframes sploot-hop {
+    0%,
+    100% {
+      transform: none;
+    }
+    45% {
+      transform: translateY(-0.35em);
+    }
+  }
+  .sploot:hover,
+  :global(.sploot-host:hover) .sploot {
+    animation: sploot-hop var(--dur-max) var(--ease);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sploot:hover,
+    :global(.sploot-host:hover) .sploot {
+      animation: none;
+    }
+  }
+
+  /* Phones: 15px keeps whole-pixel 9px cells; 19px rows under 19.8px glyphs. */
+  @media (max-width: 480px) {
+    .sploot:not(.sploot--mini) {
+      font-size: 0.9375rem;
+      line-height: 1.1875rem;
+    }
+  }
+</style>

@@ -1,0 +1,44 @@
+---
+// GitHub Pages serves this for any missing path under /blog/. Literal copy
+// (what's missing, why, what to do); Sploot sniffing around is the only joke.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Sploot from '../components/Sploot.astro';
+import { withBase } from '../utils';
+---
+
+<BaseLayout title="Page not found" description="No page at this address.">
+  <div class="sploot-note sploot-host reveal" style="--i: 0">
+    <Sploot pose="sniff" />
+  </div>
+  <h1 class="hero reveal" style="--i: 1">Page not found</h1>
+  <p class="lost reveal" style="--i: 2">
+    No page lives at this address. It may have moved, or the link may have a typo.
+  </p>
+  <nav class="lost__ways reveal" style="--i: 3" aria-label="Find a page">
+    <a href={withBase('search/')}>Search the blog →</a>
+    <a href={withBase('')}>Latest posts →</a>
+  </nav>
+</BaseLayout>
+
+<style>
+  .lost {
+    margin: calc(-1 * var(--s-xl)) 0 var(--s-xl);
+    color: var(--fg);
+  }
+  .lost__ways {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-lg);
+    padding-top: var(--s-md);
+    border-top: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: var(--t-label-md-size);
+  }
+  .lost__ways a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .lost__ways a:hover {
+    color: var(--accent-bright);
+  }
+</style>

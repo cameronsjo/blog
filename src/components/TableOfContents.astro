@@ -1,5 +1,6 @@
 ---
 import type { MarkdownHeading } from 'astro';
+import Sploot from './Sploot.astro';
 
 interface Props {
   headings: MarkdownHeading[];
@@ -7,36 +8,111 @@ interface Props {
 
 const { headings } = Astro.props;
 // h2/h3 only — h1 is the post title, h4+ is too granular for a sidebar TOC.
-const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+// rehype-autolink-headings appends a "#" anchor inside each heading, and
+// Astro's heading text includes it; strip it so entries don't end in "#".
+const toc = headings
+  .filter((h) => h.depth === 2 || h.depth === 3)
+  .map((h) => ({ ...h, text: h.text.replace(/\s*#$/, '') }));
 ---
 
 {
   toc.length > 1 && (
-    <nav class="toc not-prose" aria-label="Table of contents">
-      <p class="toc__label">On this page</p>
-      <ul class="toc__list">
-        {toc.map((h) => (
-          <li class:list={['toc__item', { 'toc__item--sub': h.depth === 3 }]}>
-            <a href={`#${h.slug}`}>{h.text}</a>
-          </li>
-        ))}
-      </ul>
-    </nav>
+    <div class="toc-rail not-prose">
+      <nav class="toc" aria-label="Table of contents" data-toc>
+        <p class="toc__label">On this page</p>
+        <ul class="toc__list">
+          {toc.map((h) => (
+            <li class:list={['toc__item', { 'toc__item--sub': h.depth === 3 }]}>
+              <a href={`#${h.slug}`} data-toc-link={h.slug}>
+                {h.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+        {/* Sploot trots down the rail to the section you're reading. The link
+            carries aria-current; the walker only echoes it. */}
+        <div class="toc__walker" data-toc-walker>
+          <Sploot pose="mini" decorative />
+        </div>
+      </nav>
+    </div>
   )
 }
 
+<script>
+  // Scroll-spy: the current section is the last TOC heading whose top has
+  // passed a line a quarter of the way down the viewport (before the first,
+  // the first). It gets aria-current="location", and on the wide-screen rail
+  // the walker moves beside it. rAF-throttled; the walker's move is a
+  // --dur-max transition, so reduced-motion collapses it to a jump.
+  //
+  // This module runs once; View Transitions swap <body>, so refs are re-read
+  // on every astro:page-load (which also fires on first load).
+  let links: HTMLAnchorElement[] = [];
+  let targets: HTMLElement[] = [];
+  let walker: HTMLElement | null = null;
+  let current: HTMLAnchorElement | null = null;
+  let queued = false;
+
+  function update() {
+    queued = false;
+    if (links.length === 0) return;
+    const line = window.innerHeight / 4;
+    let index = 0;
+    targets.forEach((el, i) => {
+      if (el.getBoundingClientRect().top <= line) index = i;
+    });
+    const next = links[index];
+    if (next !== current) {
+      current?.removeAttribute('aria-current');
+      next.setAttribute('aria-current', 'location');
+      current = next;
+    }
+    if (walker) {
+      // Level with the link's list item (offsetTop is relative to the TOC).
+      // Placed on every pass, not just on a change: a resize can re-wrap the
+      // rail and move the item without changing the current section.
+      const item = next.parentElement as HTMLElement;
+      walker.style.setProperty('--walker-y', `${item.offsetTop}px`);
+      walker.dataset.ready = '';
+    }
+  }
+
+  function schedule() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(update);
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    const toc = document.querySelector<HTMLElement>('[data-toc]');
+    links = toc ? [...toc.querySelectorAll<HTMLAnchorElement>('[data-toc-link]')] : [];
+    targets = links
+      .map((a) => document.getElementById(a.dataset.tocLink ?? ''))
+      .filter((el): el is HTMLElement => el !== null);
+    // A heading id the page doesn't have would misalign index ↔ link.
+    if (targets.length !== links.length) links = [];
+    walker = toc?.querySelector<HTMLElement>('[data-toc-walker]') ?? null;
+    current = null;
+    update();
+  });
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', schedule, { passive: true });
+</script>
+
 <style>
   .toc {
-    margin-bottom: var(--s-lg, 2rem);
-    padding: var(--s-sm, 0.75rem) var(--s-md, 1rem);
+    position: relative;
+    margin-bottom: var(--s-lg);
+    padding: var(--s-sm) var(--s-md);
     border-left: 2px solid var(--border);
     background: var(--bg-raised);
     border-radius: var(--radius-sm);
   }
   .toc__label {
-    margin: 0 0 0.5rem;
+    margin: 0 0 var(--s-sm);
     font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font-size: var(--t-label-xs-size);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--fg-secondary);
@@ -49,16 +125,66 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
   .toc__item {
     line-height: 1.5;
   }
+  .toc__item + .toc__item {
+    margin-top: var(--s-xs);
+  }
   .toc__item--sub {
-    padding-left: 1rem;
+    padding-left: var(--s-md);
   }
   .toc__item a {
     color: var(--fg-secondary);
     text-decoration: none;
-    font-size: 0.85rem;
+    font-size: var(--t-label-md-size);
     transition: color var(--dur-fast) var(--ease);
   }
   .toc__item a:hover {
     color: var(--accent);
+  }
+  /* Current section: accent plus weight, so it never rides on color alone. */
+  .toc__item a[aria-current='location'] {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* The walker only has room on the wide-screen rail. */
+  .toc__walker {
+    display: none;
+  }
+
+  /* ── Wide screens: the TOC leaves the column for a sticky rail in the left
+     margin, so it (and Sploot) stays in view while you read. The rail spans
+     the article's full height; the TOC sticks inside it. 75rem leaves the
+     rail + gutter (16rem) clear of the viewport edge next to the 42rem
+     column. ───────────────────────────────────────────────────────────── */
+  @media (min-width: 75rem) {
+    .toc-rail {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: calc(100% + var(--s-3xl) - var(--s-xl));
+      width: 12rem;
+    }
+    .toc {
+      position: sticky;
+      top: var(--s-xl);
+      margin-bottom: 0;
+    }
+    /* Sploot stands in the gutter between rail and column, facing the text,
+       level with the current link. Hidden until the spy has placed it. */
+    .toc__walker {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: calc(100% + var(--s-sm));
+      opacity: 0;
+      transform: translateY(calc(var(--walker-y, 0px) - var(--s-xs)));
+      transition:
+        transform var(--dur-max) var(--ease),
+        opacity var(--dur-fast) var(--ease);
+      pointer-events: none;
+    }
+    .toc__walker[data-ready] {
+      opacity: 1;
+    }
   }
 </style>
