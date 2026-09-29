@@ -26,9 +26,19 @@ dot under 400px so the row fits a 320px viewport.
 (`index.astro`, `Clawd.astro`). Both the frame and Clawd are `--accent`,
 matching the Claude Code theme's `claude` / `clawd_body` → `P.accent` mapping.
 
+**Space scene.** Every page ends, below the colophon, with a full-bleed band
+(`SpaceScene.astro`, a claude.dev homage): Clawd in a box-drawing helmet
+(`<Clawd helmet />`, a second text layer in `--fg-secondary`) adrift among
+seeded, build-time dot-matrix planets (`·` `•` `●` in `--fg-disabled`) and gold
+`+` sparkles (`--accent-bright`). It's static, per the no-looping-decoration
+rule, and hovering it gives the same one-shot hop. It's `aria-hidden`: scenery
+past the content, nothing to announce. The planets paint as
+`content: attr(data-art)` rather than DOM text, because they're drawn below
+text contrast on purpose, and as text axe flags every `●`.
+
 | type | surface | what + why | upstream? |
 |------|---------|------------|-----------|
-| gap | font | **Block-glyph subset.** The bundled JetBrains Mono is a 229-glyph Latin subset with no U+2500–259F, so Clawd (and any `├──` tree in a code block) rendered in the OS fallback mono and misaligned. `src/assets/fonts/jetbrains-mono-blocks.woff2` (2.5 KB, JetBrains Mono 2.304 Regular, OFL) extends the `"JetBrains Mono"` family via `unicode-range`. It is declared once per bundled weight: a face with a different weight descriptor is never consulted. Regenerate command in `global.css`. Retire when the package's subset includes U+2500–259F. | yes |
+| gap | font | **Block-glyph subset.** The bundled JetBrains Mono is a 229-glyph Latin subset with no U+2500–25FF (box drawing, block elements, geometric shapes), so Clawd, the `●` planets, and any `├──` tree in a code block rendered in the OS fallback mono and misaligned. `src/assets/fonts/jetbrains-mono-blocks.woff2` (3.4 KB, JetBrains Mono 2.304 Regular, OFL) extends the `"JetBrains Mono"` family via `unicode-range`. It is declared once per bundled weight: a face with a different weight descriptor is never consulted. Regenerate command in `global.css`. Retire when the package's subset includes U+2500–25FF. | yes |
 | extension | progress | **Reading-progress bar.** No system primitive exists. Blog-local, built only from existing tokens. | maybe |
 | extension | Clawd | **Block-glyph rendering recipe:** whole-pixel cells (20/15px), whole-pixel line pitch under the 1.32em glyph (26/19px), body letter/word spacing undone, and a `0.03em` same-color text stroke to close anti-alias seams. Recorded upstream in case the system ever documents ASCII/TUI art. | maybe |
 

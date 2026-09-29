@@ -7,29 +7,38 @@
 // Colored --accent: Artificer's Claude Code theme maps `clawd_body` to accent,
 // so this is the same Clawd the terminal paints. Hover a `.clawd-host`
 // ancestor (or Clawd himself) and he hops once — a state change, not a loop.
+//
+// `helmet` suits him up for space: a second text layer, stacked on the same
+// grid cell, draws a box-drawing fishbowl around his head whose bottom edge
+// crosses his body as the collar. Two layers because one character cell can
+// only hold one color.
 interface Props {
   class?: string;
+  helmet?: boolean;
 }
 
-const { class: className } = Astro.props;
+const { class: className, helmet = false } = Astro.props;
 
-const CLAWD = [' ▐▛███▜▌', '▝▜█████▛▘', '  ▘▘ ▝▝'].join('\n');
+const CLAWD = [' ▐▛███▜▌', '▝▜█████▛▘', '  ▘▘ ▝▝'];
+// Suited: one blank row above for the dome, one column in for the walls. The
+// blank row is a space, not '': HTML drops a newline right after <pre>, which
+// would pull the body up a row out from under the helmet.
+const BODY = helmet ? [' ', ...CLAWD.map((row) => ` ${row}`)] : CLAWD;
+const HELMET = ['╭───────╮', '│       │', '╰───────╯'].map((row) => ` ${row}`);
+
+const label = helmet
+  ? 'Clawd, the Claude Code mascot, in a space helmet, drawn in block characters'
+  : 'Clawd, the Claude Code mascot, drawn in block characters';
 ---
 
-<pre
-  class:list={['clawd', className]}
-  role="img"
-  aria-label="Clawd, the Claude Code mascot, drawn in block characters">{CLAWD}</pre>
+<div class:list={['clawd', className]} role="img" aria-label={label}>
+  <pre class="clawd__layer clawd__body">{BODY.join('\n')}</pre>
+  {helmet && <pre class="clawd__layer clawd__helmet">{HELMET.join('\n')}</pre>}
+</div>
 
 <style>
   .clawd {
-    margin: 0;
-    padding: 0;
-    overflow: visible;
-    background: none;
-    color: var(--accent);
-    font-family: var(--font-mono);
-    font-weight: 400;
+    display: inline-grid;
     /* 20px → 12px cells and 6px quadrants: whole pixels, so adjacent glyphs
        meet without anti-aliased seams. The block glyphs are 1.32em tall
        (26.4px); a whole-pixel 26px line pitch overlaps rows by a hair. A
@@ -37,6 +46,17 @@ const CLAWD = [' ▐▛███▜▌', '▝▜█████▛▘', '  ▘�
        hairline between rows, so both sizes pin line-height to whole pixels. */
     font-size: 1.25rem;
     line-height: 1.625rem;
+  }
+  .clawd__layer {
+    grid-area: 1 / 1;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    background: none;
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: inherit;
+    line-height: inherit;
     /* The page's body letter/word spacing would pry the glyphs apart. */
     letter-spacing: 0;
     word-spacing: normal;
@@ -46,6 +66,16 @@ const CLAWD = [' ▐▛███▜▌', '▝▜█████▛▘', '  ▘�
        add up to a solid pixel, leaving hairline seams (worst on light ground).
        A same-color stroke this thin swells each glyph just past the seam. */
     -webkit-text-stroke: 0.03em currentColor;
+  }
+  .clawd__body {
+    color: var(--accent);
+  }
+  /* Later in the grid cell, so it paints over the body: the collar reads as a
+     band across him, not a line behind him. Box-drawing glyphs already overlap
+     their neighbors by design, so the seam stroke only beads their joins. */
+  .clawd__helmet {
+    color: var(--fg-secondary);
+    -webkit-text-stroke: 0;
   }
 
   @keyframes clawd-hop {

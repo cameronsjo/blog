@@ -4,6 +4,7 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import ReadingProgress from '../components/ReadingProgress.astro';
+import SpaceScene from '../components/SpaceScene.astro';
 import '@cameronsjo/artificer/artificer.css';
 import '@cameronsjo/artificer/whimsy.css';
 import '../styles/global.css';
@@ -112,12 +113,16 @@ const CF_BEACON_TOKEN = '9db7302de886402680e0838d0f35f7db';
   </head>
   <body>
     <ReadingProgress progress={progress} />
-    <div class="shell mx-auto flex min-h-screen max-w-2xl flex-col px-5">
-      <Header />
-      <main class="flex-1 py-10">
-        <slot />
-      </main>
-      <Footer />
+    <div class="flex min-h-screen flex-col">
+      <div class="shell mx-auto flex w-full max-w-2xl flex-1 flex-col px-5">
+        <Header />
+        <main class="flex-1 py-10">
+          <slot />
+        </main>
+        <Footer />
+      </div>
+      {/* Full-bleed, below the colophon — Clawd adrift at the page foot. */}
+      <SpaceScene />
     </div>
     <script
       is:inline
