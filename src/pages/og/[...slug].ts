@@ -32,7 +32,6 @@ const RAIL_WIDTH = 12;
 const PADDING = 60;
 
 export const { getStaticPaths, GET } = await OGImageRoute({
-  param: 'slug',
   pages,
   getImageOptions: (_path, page) => ({
     title: page.title,
