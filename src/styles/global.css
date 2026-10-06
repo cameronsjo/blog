@@ -5,6 +5,38 @@
    @cameronsjo/artificer's bundled @font-face — Vite resolves and emits the
    hashed woff2 from node_modules under the /blog/ base. */
 
+/* Box drawing, block elements, and geometric shapes (U+2500–25FF) for
+   "JetBrains Mono". The package's bundled JBM is a 229-glyph Latin subset
+   without them, so text art (Sploot, the footer's ● planets, `├──` trees in
+   code) fell back to whatever mono the OS had — different advance widths and
+   heights, so the art misaligned. This 3.4 KB
+   subset of JetBrains Mono 2.304 Regular (OFL, src/assets/fonts/OFL.txt) extends
+   the same family via unicode-range. One face per bundled weight, all the same
+   file: a face whose weight descriptor differs from the package's 400/500/700
+   lands in a separate matching group and is never consulted for those weights.
+   Regenerate with:
+     pyftsubset JetBrainsMono-Regular.ttf --unicodes='U+2500-25FF' \
+       --flavor=woff2 --layout-features='' --no-hinting --desubroutinize \
+       --output-file=src/assets/fonts/jetbrains-mono-blocks.woff2 */
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("../assets/fonts/jetbrains-mono-blocks.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+  unicode-range: U+2500-25FF;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("../assets/fonts/jetbrains-mono-blocks.woff2") format("woff2");
+  font-weight: 500; font-style: normal; font-display: swap;
+  unicode-range: U+2500-25FF;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("../assets/fonts/jetbrains-mono-blocks.woff2") format("woff2");
+  font-weight: 700; font-style: normal; font-display: swap;
+  unicode-range: U+2500-25FF;
+}
+
 /* Expose the font stacks as Tailwind theme vars (font-sans / font-mono). */
 @theme {
   --font-sans: "iA Writer Quattro S", "Iowan Old Style", "Charter", system-ui, sans-serif;
@@ -144,14 +176,8 @@ body::before {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* Brand top-rule — gold → purple hairline (Cameron's signature pairing). */
-.topline {
-  position: fixed;
-  inset: 0 0 auto 0;
-  height: 2px;
-  z-index: 50;
-  background: linear-gradient(90deg, var(--accent), var(--brand-purple));
-}
+/* The brand top-rule (gold → purple) lives in ReadingProgress.astro — it
+   doubles as the reading-progress bar on posts. */
 
 /* Content sits above the grain. */
 .shell {
@@ -173,8 +199,9 @@ body::before {
   .reveal { animation: none !important; }
 }
 
-/* ── Index lede — a quiet subtitle under the `blog.` wordmark, not a second
-   headline. Mono, medium weight, secondary ink, comfortable measure. ──── */
+/* ── Page lede — the quiet mono h1 on search / archive / tags (the index
+   uses the Sploot welcome panel instead). Mono, medium weight, secondary ink,
+   comfortable measure. ──── */
 .hero {
   font-family: var(--font-mono);
   font-weight: 500;
@@ -186,6 +213,19 @@ body::before {
   max-width: 38ch;
   margin: var(--s-sm) 0 var(--s-2xl);
   text-wrap: balance;
+}
+
+/* ── Sploot notes — empty states and the 404: the critter in a pose, then
+   the literal line. Sploot carries the mood; the copy never does. ──────── */
+.sploot-note {
+  display: grid;
+  justify-items: start;
+  gap: var(--s-md);
+  margin: var(--s-lg) 0 var(--s-2xl);
+  color: var(--fg-secondary);
+}
+.sploot-note p {
+  margin: 0;
 }
 
 /* ── Editorial index entries — asymmetric number/date rail | title/desc ── */

@@ -4,6 +4,74 @@ How this project bends the Artificer design system, and why. Each surviving
 entry mirrors a feedback issue filed upstream — a divergence not worth filing
 is not worth keeping.
 
+## 2026-09-29 · Facelift: reading-progress top rule, Sploot, block-glyph font (0.22.1)
+
+**Reading progress.** The fixed gold → purple `.topline` moved into
+`ReadingProgress.astro`. On posts (`PostLayout` passes `progress`, the
+`<article>` carries `[data-progress-target]`) it is a 3px bar over a `--border`
+track that fills as the article scrolls past. It reveals with `clip-path`, so
+the gradient stays pinned to the viewport. Everywhere else it is the same full,
+static 2px rule as before. The header stays **non-sticky**. #131 asked for
+exactly that, and `.masthead` codified it. A sticky `.page-shell > header`
+version was built and reverted, so the progress bar is its own fixed element
+instead of riding the header.
+
+**Header.** Same structure. It borrows `.masthead__nav`'s current-page
+treatment (accent + 2px inset band) instead of an fg/secondary color swap,
+which keeps "you are here" from riding on color alone. It also moves the toggle
+to tokens, gives touch pointers 44px targets, and collapses the toggle to its
+dot under 400px so the row fits a 320px viewport.
+
+**Sploot.** Artificer's critter, minted here and picked by the owner (who
+likes corgis): a Pembroke corgi named for the flat-out, back-legs-behind
+lounge corgis are known for (`Sploot.astro`). It's long, low and big-eared,
+drawn in `--accent`, the wordmark full stop's burnished gold, which is also
+about the color of a Pembroke's coat. The story it carries: a herding dog for a
+system whose job is keeping every site in one flock (the uniformity doctrine);
+in Welsh legend corgis were fairy steeds, which suits an artificer. It's an
+original 30×8 px sprite in quadrant block glyphs, single-tone because cream
+"white" patches vanish on the light theme's cream ground. Drafts went through
+Clawd (Anthropic's Claude Code mascot, replaced before merge because it is
+Anthropic's trademark and this is not an Anthropic site) and Pip (a seedling,
+superseded by the owner's corgi call). The index h1 sits beside Sploot in a
+terminal-style panel (accent frame, title cut into the top border).
+
+**Space scene.** Every page ends, below the colophon, with a full-bleed band
+(`SpaceScene.astro`): Sploot in a fishbowl helmet over its head
+(`<Sploot helmet />`, a second text layer in `--fg-secondary`), tilted a fixed
+−7° so it reads as adrift, among seeded, build-time dot-matrix planets (`·` `•`
+`●` in `--fg-disabled`) and gold `+` sparkles (`--accent-bright`). It's static,
+per the no-looping-decoration rule, and hovering it gives the same one-shot
+hop. It's `aria-hidden`: scenery past the content, nothing to announce. The
+planets paint as `content: attr(data-art)` rather than DOM text, because
+they're drawn below text contrast on purpose, and as text axe flags every `●`.
+
+**Sploot around the site.** Every pose is a pixel grid in `src/lib/sploot.ts`,
+converted to glyphs at build time:
+- **Table of contents.** On wide screens (≥ 75rem) the TOC leaves the column
+  for a sticky rail in the left margin. A scroll-spy sets
+  `aria-current="location"` on the current section's link (accent + bold, not
+  color alone), and a mini Sploot (`aria-hidden`) moves beside it in the
+  gutter, a `--dur-max` transition. On narrow screens the TOC stays in the
+  column with the same highlight and no walker. Entries no longer end in the
+  autolink `#` that Astro's heading text picked up.
+- **Empty states** (no posts, no tags) show Sploot asleep with z's.
+- **The new `404.astro`** shows Sploot sniffing, with literal copy (what's
+  missing, why, where to go).
+- **Winter scarf.** The pre-paint script sets `<html data-season>` from the
+  reader's clock, and December–February shows a `--brand-purple` scarf layer.
+- **Favicon.** Sploot's head in profile. A favicon can't read page tokens, so
+  it carries the dark bg and accent hexes.
+
+| type | surface | what + why | upstream? |
+|------|---------|------------|-----------|
+| gap | font | **Block-glyph subset.** The bundled JetBrains Mono is a 229-glyph Latin subset with no U+2500–25FF (box drawing, block elements, geometric shapes), so Sploot, the `●` planets, and any `├──` tree in a code block rendered in the OS fallback mono and misaligned. `src/assets/fonts/jetbrains-mono-blocks.woff2` (3.4 KB, JetBrains Mono 2.304 Regular, OFL) extends the `"JetBrains Mono"` family via `unicode-range`. It is declared once per bundled weight: a face with a different weight descriptor is never consulted. Regenerate command in `global.css`. Retire when the package's subset includes U+2500–25FF. | yes |
+| extension | progress | **Reading-progress bar.** No system primitive exists. Blog-local, built only from existing tokens. | maybe |
+| extension | toc | **TOC rail + scroll-spy.** Sticky side rail on wide screens with `aria-current="location"` tracking; no system TOC primitive exists. | maybe |
+| extension | Sploot | **Block-glyph rendering recipe:** whole-pixel cells (20/15px), whole-pixel line pitch under the 1.32em glyph (26/19px), body letter/word spacing undone, and a `0.03em` same-color text stroke to close anti-alias seams. Recorded upstream in case the system ever documents ASCII/TUI art. | maybe |
+
+**Filed upstream:** [`cameronsjo/artificer-design-system#523`](https://github.com/cameronsjo/artificer-design-system/issues/523) (font gap, progress bar, text-art recipe) and [`#524`](https://github.com/cameronsjo/artificer-design-system/issues/524) (Sploot, proposed for § Brand).
+
 ## 2026-08-02 · Adopted the `.colophon__spine` three-zone footer (0.22.0)
 
 **Version bump** — `@cameronsjo/artificer` 0.21.0 → 0.22.0, which mints

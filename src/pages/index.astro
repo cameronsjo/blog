@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
+import Sploot from '../components/Sploot.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { withBase } from '../utils';
 
@@ -16,7 +17,13 @@ const hasMore = allPosts.length > LATEST;
 ---
 
 <BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
-  <h1 class="hero reveal" style="--i: 0">{SITE_DESCRIPTION}</h1>
+  {/* A terminal-style welcome panel: accent frame with the title set into its
+      top border, Sploot on the left, the tagline beside it. */}
+  <div class="welcome sploot-host reveal" style="--i: 0">
+    <p class="welcome__legend">{SITE_TITLE}</p>
+    <Sploot />
+    <h1 class="welcome__title">{SITE_DESCRIPTION}</h1>
+  </div>
   {
     posts.length > 0 ? (
       <ol class="entries" role="list">
@@ -27,7 +34,10 @@ const hasMore = allPosts.length > LATEST;
         ))}
       </ol>
     ) : (
-      <p style="color: var(--fg-secondary)">No posts yet.</p>
+      <div class="sploot-note sploot-host reveal" style="--i: 1">
+        <Sploot pose="sleep" />
+        <p>No posts yet.</p>
+      </div>
     )
   }
   {
@@ -43,6 +53,70 @@ const hasMore = allPosts.length > LATEST;
 </BaseLayout>
 
 <style>
+  /* Frame and Sploot both in --accent, the burnished gold of the wordmark's
+     full stop. */
+  .welcome {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: var(--s-lg);
+    margin: var(--s-md) 0 var(--s-2xl);
+    padding: var(--s-lg) var(--s-lg) var(--s-lg) var(--s-xl);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-md);
+  }
+  /* The title cut into the top border, like a TUI box: `╭─── title ───╮`. */
+  .welcome__legend {
+    position: absolute;
+    top: 0;
+    left: var(--s-lg);
+    transform: translateY(-50%);
+    margin: 0;
+    padding-inline: var(--s-sm);
+    background: var(--bg);
+    font-family: var(--font-mono);
+    font-size: var(--t-label-md-size);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--fg);
+    word-spacing: normal;
+  }
+  /* Sploot a size down in the panel so the box stays compact: 15px keeps
+     whole-pixel 9px cells, 19px rows under 19.8px glyphs. */
+  .welcome :global(.sploot) {
+    font-size: 0.9375rem;
+    line-height: 1.1875rem;
+  }
+  /* 1rem × 1.625 = 26px lines — reads level beside Sploot. */
+  .welcome__title {
+    margin: 0;
+    max-width: 44ch;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 1.625;
+    letter-spacing: -0.01em;
+    word-spacing: normal;
+    color: var(--fg);
+    text-wrap: balance;
+  }
+  @media (max-width: 480px) {
+    .welcome {
+      gap: var(--s-md);
+      padding: var(--s-lg) var(--s-md) var(--s-md);
+    }
+    .welcome__title {
+      font-size: 0.9375rem;
+    }
+  }
+  /* Too narrow to sit side by side: Sploot over the tagline. */
+  @media (max-width: 360px) {
+    .welcome {
+      grid-template-columns: 1fr;
+    }
+  }
+
   .browse {
     display: flex;
     gap: var(--s-lg, 2rem);
