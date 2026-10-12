@@ -6,7 +6,9 @@ const year = new Date().getFullYear();
 ---
 
 <footer class="colophon">
-  <div class="container">
+  {/* No .container: the page shell already sets the column and its inline
+      padding, and .container would indent the footer a second time. */}
+  <div>
     <div class="colophon__spine">
       <span>© {year} {SITE_TITLE}</span>
       {/* Seasonal greeting (artificer-whimsy). The inline text IS the off-season
