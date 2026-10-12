@@ -39,71 +39,63 @@ const CF_BEACON_TOKEN = '9db7302de886402680e0838d0f35f7db';
     />
     <ClientRouter />
     {/* Theme: applied pre-paint (no FOUC), shared with the rest of the
-        Artificer system via the `artificer.theme` localStorage key. */}
+        Artificer system via the `artificer.theme` localStorage key. Same
+        bootstrap as the root site: it ONLY sets the initial data-theme before
+        first paint (default dark on a first visit, else the pinned mode, with
+        'auto' resolved against the OS). Binding the toggle (glyph,
+        aria-label, the dark → light → auto cycle, live OS tracking in auto)
+        is @cameronsjo/artificer/theme.js's job, loaded below.
+
+        A first visit WRITES 'dark' to the key: theme.js reads a missing key
+        as 'auto', so without the write a light-OS visitor paints dark and
+        then flips to light when theme.js binds. Theme carry-over across
+        view transitions is handled in the module script below. */}
     <script is:inline>
       (function () {
         var KEY = 'artificer.theme';
-        function current() {
-          return (
-            document.documentElement.getAttribute('data-theme') ||
-            (window.matchMedia('(prefers-color-scheme: light)').matches
-              ? 'light'
-              : 'dark')
-          );
-        }
-        // Always set an explicit data-theme (default dark) so theme-dependent
-        // CSS — including the whimsy layer — never falls into ambiguous
-        // :not([data-theme]) / prefers-color-scheme branches.
-        var initial = 'dark';
+        var stored = null;
         try {
-          var stored = localStorage.getItem(KEY);
-          if (stored === 'light' || stored === 'dark') initial = stored;
-        } catch (e) {
-          /* localStorage blocked (private mode / disabled) — keep the dark
-             default already in `initial`; nothing actionable to log pre-paint. */
-        }
-        document.documentElement.setAttribute('data-theme', initial);
-
-        function apply(next) {
-          document.documentElement.setAttribute('data-theme', next);
+          stored = localStorage.getItem(KEY);
+        } catch (e) {}
+        // Missing key: first visit, pin dark. Unrecognised value: 'auto',
+        // the same reading theme.js's storedMode() gives it.
+        var mode =
+          stored === null
+            ? 'dark'
+            : stored === 'dark' || stored === 'light' || stored === 'auto'
+              ? stored
+              : 'auto';
+        if (stored === null) {
           try {
-            localStorage.setItem(KEY, next);
-          } catch (e) {
-            /* Persist is best-effort; the in-DOM data-theme still updates. */
-          }
-          document.querySelectorAll('[data-theme-label]').forEach(function (l) {
-            l.textContent = next === 'light' ? 'Light' : 'Dark';
-          });
+            localStorage.setItem(KEY, mode);
+          } catch (e) {}
         }
-
-        function bind() {
-          var init = current();
-          document.querySelectorAll('[data-theme-label]').forEach(function (l) {
-            l.textContent = init === 'light' ? 'Light' : 'Dark';
-          });
-          document
-            .querySelectorAll('[data-theme-toggle]')
-            .forEach(function (b) {
-              if (b.dataset.themeBound === '1') return;
-              b.dataset.themeBound = '1';
-              b.addEventListener('click', function () {
-                apply(current() === 'light' ? 'dark' : 'light');
-              });
-            });
-        }
-
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', bind);
-        } else {
-          bind();
-        }
-        // View Transitions swap <body> without re-firing DOMContentLoaded, so
-        // the replaced toggle buttons arrive unbound. Rebind after every swap;
-        // bind() is idempotent via the data-themeBound guard, so the overlap
-        // with the initial call above is harmless. <html> persists across
-        // swaps, so data-theme carries over with no flash.
-        document.addEventListener('astro:page-load', bind);
+        var theme =
+          mode === 'auto'
+            ? window.matchMedia &&
+              window.matchMedia('(prefers-color-scheme: light)').matches
+              ? 'light'
+              : 'dark'
+            : mode;
+        document.documentElement.setAttribute('data-theme', theme);
       })();
+    </script>
+    <script>
+      import '@cameronsjo/artificer/theme.js';
+      // View Transitions replace <html>'s attributes with the incoming
+      // document's, and the server-rendered <html> has no data-theme. Carry
+      // the live theme onto the new document before the swap, or every link
+      // click paints the default theme until theme.js rebinds.
+      document.addEventListener('astro:before-swap', (e) => {
+        const theme = document.documentElement.getAttribute('data-theme');
+        if (theme) e.newDocument.documentElement.setAttribute('data-theme', theme);
+      });
+      // The swap also replaces <body>, so the toggle arrives unbound and
+      // theme.js's MutationObserver is still watching the old body. Rebind
+      // after every swap; bind() skips buttons it already bound.
+      document.addEventListener('astro:page-load', () => {
+        window.ArtificerTheme?.bind();
+      });
     </script>
   </head>
   <body>

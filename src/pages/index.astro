@@ -46,9 +46,8 @@ const hasMore = allPosts.length > LATEST;
   .browse {
     display: flex;
     gap: var(--s-lg, 2rem);
-    margin-top: var(--s-xl, 3rem);
-    padding-top: var(--s-md, 1rem);
-    border-top: 1px solid var(--border);
+    /* No top rule: .entries already closes with a bottom border. */
+    margin-top: var(--s-lg);
     font-family: var(--font-mono);
     font-size: 0.85rem;
   }

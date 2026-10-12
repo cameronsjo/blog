@@ -195,9 +195,10 @@ body::before {
   margin: 0;
   padding: 0;
 }
+:root { --entry-rail: 6.5rem; }
 .entry {
   display: grid;
-  grid-template-columns: 3.5rem 1fr;
+  grid-template-columns: var(--entry-rail) 1fr;
   gap: var(--s-lg);
   padding: var(--s-lg) 0;
   border-top: 1px solid var(--border);
@@ -226,6 +227,7 @@ body::before {
 }
 .entry__date {
   font-size: 12px;
+  white-space: nowrap;
   color: var(--fg-secondary);
 }
 .entry__main {
@@ -278,6 +280,9 @@ body::before {
   transition:
     opacity var(--dur-fast) var(--ease),
     color var(--dur-fast) var(--ease);
+}
+.heading-anchor::after {
+  content: "#";
 }
 .prose :is(h2, h3, h4):hover .heading-anchor,
 .heading-anchor:focus-visible {

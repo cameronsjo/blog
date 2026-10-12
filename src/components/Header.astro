@@ -26,52 +26,37 @@ const nav = [
       nav.map((item) => {
         const active = path === item.href.replace(/\/$/, '');
         return (
-          <a
-            href={item.href}
-            aria-current={active ? 'page' : undefined}
-            style={active ? 'color: var(--fg)' : 'color: var(--fg-secondary)'}
-          >
+          <a class="nav-link" href={item.href} aria-current={active ? 'page' : undefined}>
             {item.label}
           </a>
         );
       })
     }
+    {/* Canonical Artificer toggle, the same one the root site uses:
+        @cameronsjo/artificer/theme.js injects the glyph and runs the
+        dark → light → auto cycle. */}
     <button
       type="button"
-      class="theme-toggle theme-toggle--inline font-mono"
+      class="theme-toggle theme-toggle--inline"
       data-theme-toggle
-      aria-label="Toggle color theme"
-    >
-      <span class="dot" aria-hidden="true"></span>
-      <span data-theme-label>Dark</span>
-    </button>
+      aria-label="Toggle theme"
+    ></button>
   </nav>
 </header>
 
 <style>
-  .theme-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--s-xs);
-    padding: 4px 10px;
-    font-size: 12px;
+  .nav-link {
     color: var(--fg-secondary);
-    background: transparent;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition:
-      border-color var(--dur-fast) var(--ease),
-      color var(--dur-fast) var(--ease);
+    text-decoration: none;
+    transition: color var(--dur-fast) var(--ease);
   }
-  .theme-toggle:hover {
+  .nav-link:hover,
+  .nav-link[aria-current='page'] {
     color: var(--fg);
-    border-color: var(--accent);
   }
-  .theme-toggle .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--accent);
+  .nav-link[aria-current='page'] {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 0.35em;
   }
 </style>

@@ -105,7 +105,10 @@ export default defineConfig({
         {
           behavior: 'append',
           properties: { className: ['heading-anchor'], ariaHidden: true, tabIndex: -1 },
-          content: { type: 'text', value: '#' },
+          // Empty on purpose: the `#` glyph is drawn by CSS (.heading-anchor::after).
+          // A text node here becomes part of the heading's text, so every
+          // table-of-contents entry ended in a stray `#`.
+          content: [],
         },
       ],
     ],

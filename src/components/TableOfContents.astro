@@ -13,7 +13,7 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 {
   toc.length > 1 && (
     <nav class="toc not-prose" aria-label="Table of contents">
-      <p class="toc__label">On this page</p>
+      <p class="toc__label eyebrow">On this page</p>
       <ul class="toc__list">
         {toc.map((h) => (
           <li class:list={['toc__item', { 'toc__item--sub': h.depth === 3 }]}>
@@ -26,20 +26,15 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 }
 
 <style>
+  /* Hairline-ruled block, not a raised card with a left stripe (an
+     Artificer anti-pattern). The label is Artificer's .eyebrow. */
   .toc {
-    margin-bottom: var(--s-lg, 2rem);
-    padding: var(--s-sm, 0.75rem) var(--s-md, 1rem);
-    border-left: 2px solid var(--border);
-    background: var(--bg-raised);
-    border-radius: var(--radius-sm);
+    margin-bottom: var(--s-xl);
+    padding: var(--s-md) 0;
+    border-block: 1px solid var(--border);
   }
   .toc__label {
-    margin: 0 0 0.5rem;
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--fg-secondary);
+    margin: 0 0 var(--s-sm);
   }
   .toc__list {
     margin: 0;
@@ -50,7 +45,7 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
     line-height: 1.5;
   }
   .toc__item--sub {
-    padding-left: 1rem;
+    padding-left: var(--s-md);
   }
   .toc__item a {
     color: var(--fg-secondary);

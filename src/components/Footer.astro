@@ -6,25 +6,25 @@ const year = new Date().getFullYear();
 ---
 
 <footer class="colophon">
-  <div class="container">
-    <div class="colophon__spine">
-      <span>© {year} {SITE_TITLE}</span>
-      {/* Seasonal greeting (artificer-whimsy). The inline text IS the off-season
-          line and renders gracefully with JS disabled; Whimsy.greeting() swaps in
-          "happy pride" + vivid flow during June, else applies the glacial drift. */}
-      <span data-whimsy-greeting data-whimsy-greeting-class="whimsy--glacial">
-        kindness is a choice.
-      </span>
-      <nav class="cluster">
-        <a href={withBase('rss.xml')}>RSS</a>
-        <a href={GITHUB_URL}>GitHub</a>
-      </nav>
-    </div>
-    <p class="colophon__fine">
-      Analytics by <a href="https://www.cloudflare.com/web-analytics/">Cloudflare Web Analytics</a> — cookieless,
-      aggregate page views only; no cookies, no visitor profiles. Hosted on GitHub Pages, which logs visitor IP
-      addresses per <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement"
-      >GitHub's privacy statement</a>.
-    </p>
+  {/* No .container wrapper: the page shell already sets the column and its
+      inline padding, and .container would indent the footer a second time. */}
+  <div class="colophon__spine">
+    <span>© {year} {SITE_TITLE}</span>
+    {/* Seasonal greeting (artificer-whimsy). The inline text IS the off-season
+        line and renders gracefully with JS disabled; Whimsy.greeting() swaps in
+        "happy pride" + vivid flow during June, else applies the glacial drift. */}
+    <span data-whimsy-greeting data-whimsy-greeting-class="whimsy--glacial">
+      kindness is a choice.
+    </span>
+    <nav class="cluster">
+      <a href={withBase('rss.xml')}>RSS</a>
+      <a href={GITHUB_URL}>GitHub</a>
+    </nav>
   </div>
+  <p class="colophon__fine">
+    Analytics by <a href="https://www.cloudflare.com/web-analytics/">Cloudflare Web Analytics</a> — cookieless,
+    aggregate page views only; no cookies, no visitor profiles. Hosted on GitHub Pages, which logs visitor IP
+    addresses per <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement"
+    >GitHub's privacy statement</a>.
+  </p>
 </footer>
