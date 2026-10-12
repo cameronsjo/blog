@@ -16,7 +16,10 @@ copy-consumed React `useTheme` hook. The blog never used it.
   canonical button, and the pre-paint bootstrap matches the root site's.
   Toggles cycle dark → light → auto on both sites. `astro:page-load` calls
   `ArtificerTheme.bind()` because view transitions swap `<body>` out from
-  under theme.js's MutationObserver.
+  under theme.js's MutationObserver. An `astro:before-swap` listener copies
+  `data-theme` onto the incoming document: the swap replaces `<html>`'s
+  attributes, and without it every link click painted the default theme
+  until the rebind. The old toggle had the same gap.
 - `.eyebrow` (0.27.0) labels the table of contents.
 
 **Local fixes in the same pass.** The TOC dropped its raised card and left

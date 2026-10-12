@@ -48,7 +48,8 @@ const CF_BEACON_TOKEN = '9db7302de886402680e0838d0f35f7db';
 
         A first visit WRITES 'dark' to the key: theme.js reads a missing key
         as 'auto', so without the write a light-OS visitor paints dark and
-        then flips to light when theme.js binds. */}
+        then flips to light when theme.js binds. Theme carry-over across
+        view transitions is handled in the module script below. */}
     <script is:inline>
       (function () {
         var KEY = 'artificer.theme';
@@ -56,7 +57,14 @@ const CF_BEACON_TOKEN = '9db7302de886402680e0838d0f35f7db';
         try {
           stored = localStorage.getItem(KEY);
         } catch (e) {}
-        var mode = stored === 'light' || stored === 'auto' ? stored : 'dark';
+        // Missing key: first visit, pin dark. Unrecognised value: 'auto',
+        // the same reading theme.js's storedMode() gives it.
+        var mode =
+          stored === null
+            ? 'dark'
+            : stored === 'dark' || stored === 'light' || stored === 'auto'
+              ? stored
+              : 'auto';
         if (stored === null) {
           try {
             localStorage.setItem(KEY, mode);
@@ -74,7 +82,15 @@ const CF_BEACON_TOKEN = '9db7302de886402680e0838d0f35f7db';
     </script>
     <script>
       import '@cameronsjo/artificer/theme.js';
-      // View Transitions swap <body>, so the toggle arrives unbound and
+      // View Transitions replace <html>'s attributes with the incoming
+      // document's, and the server-rendered <html> has no data-theme. Carry
+      // the live theme onto the new document before the swap, or every link
+      // click paints the default theme until theme.js rebinds.
+      document.addEventListener('astro:before-swap', (e) => {
+        const theme = document.documentElement.getAttribute('data-theme');
+        if (theme) e.newDocument.documentElement.setAttribute('data-theme', theme);
+      });
+      // The swap also replaces <body>, so the toggle arrives unbound and
       // theme.js's MutationObserver is still watching the old body. Rebind
       // after every swap; bind() skips buttons it already bound.
       document.addEventListener('astro:page-load', () => {

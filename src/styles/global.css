@@ -271,9 +271,6 @@ body::before {
 .prose :is(h2, h3, h4) {
   position: relative;
 }
-.heading-anchor::after {
-  content: "#";
-}
 .heading-anchor {
   margin-left: 0.4rem;
   color: var(--fg-disabled);
@@ -283,6 +280,9 @@ body::before {
   transition:
     opacity var(--dur-fast) var(--ease),
     color var(--dur-fast) var(--ease);
+}
+.heading-anchor::after {
+  content: "#";
 }
 .prose :is(h2, h3, h4):hover .heading-anchor,
 .heading-anchor:focus-visible {
