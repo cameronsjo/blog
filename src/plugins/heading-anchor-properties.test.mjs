@@ -4,6 +4,8 @@ import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+import path from 'node:path';
+import { VFile } from 'vfile';
 import { headingAnchorProperties } from './heading-anchor-properties.mjs';
 
 test('names the section using text from formatted headings without hiding its link', () => {
@@ -51,4 +53,32 @@ test('names headings through Astro’s actual Markdown pipeline, including split
   assert.match(result.code, /aria-label="Link to section: Image diagram"/);
   assert.doesNotMatch(result.code, /aria-label="[^"]*hidden/);
   assert.doesNotMatch(result.code, /aria-hidden|tabindex="-1"/);
+});
+
+test('compiles MDX inline JSX and runtime expressions without evaluating them', async () => {
+  const { createMdxProcessor } = await import(new URL('./plugins.js', import.meta.resolve('@astrojs/mdx')).href);
+  const processor = createMdxProcessor({
+    syntaxHighlight: false, gfm: true, smartypants: true, remarkPlugins: [],
+    rehypePlugins: [rehypeSlug, [rehypeAutolinkHeadings, {
+      behavior: 'append', properties: headingAnchorProperties, content: [],
+    }]],
+    remarkRehype: {}, recmaPlugins: [], optimize: false,
+  }, { sourcemap: false });
+  for (const [source, label] of [
+    ['## HTML <span>markup</span>', 'Link to section: HTML markup'],
+    ['## Expression {value}', 'Link to this section'],
+    ['## Raw <script>hidden</script>', 'Link to section: Raw'],
+    ['## Raw <style>hidden</style>', 'Link to section: Raw'],
+    ['## Raw <span>visible</span><script>hidden</script>', 'Link to section: Raw visible'],
+    ['## Image <img alt="diagram" />', 'Link to section: Image diagram'],
+    ['## Image <img alt={description} />', 'Link to this section'],
+  ]) {
+    const result = await processor.process(new VFile({
+      value: source, path: path.resolve('src/content/blog/fixture.mdx'),
+      data: { astro: { frontmatter: {} }, applyFrontmatterExport: { srcDir: pathToFileURL(`${path.resolve('src')}/`) } },
+    }));
+    assert.ok(String(result).includes(label), `compiled MDX contains ${label}`);
+    const compiledLabel = String(result).match(/"aria-label":\s*"([^"]*)"/)?.[1];
+    assert.equal(compiledLabel, label);
+  }
 });
