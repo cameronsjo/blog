@@ -10,6 +10,7 @@ Cameron Sjo's blog. Built with [Astro](https://astro.build), deployed to GitHub 
   **TOC** + heading anchors + reading time on posts
 - **Static search** via [Pagefind](https://pagefind.app) (`/search`) — indexed at
   build, self-hosted, no third-party calls
+- **Section permalinks** are keyboard-focusable, named for screen readers, and visible on touch devices without adding `#` to heading or TOC text.
 - **SEO**: JSON-LD, build-time OG cards, `robots.txt`, `llms.txt`, sitemap with
   per-post `lastmod`
 - **Privacy-friendly analytics** — Cloudflare Web Analytics beacon (cookieless)
