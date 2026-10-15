@@ -1,11 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createRequire } from 'node:module';
-import { pathToFileURL } from 'node:url';
+import { compile } from '@mdx-js/mdx';
+import { createMarkdownProcessor } from '@astrojs/markdown-remark';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
-import path from 'node:path';
-import { VFile } from 'vfile';
 import { headingAnchorProperties } from './heading-anchor-properties.mjs';
 
 test('names the section using text from formatted headings without hiding its link', () => {
@@ -39,9 +37,6 @@ test('includes image alternatives in both Markdown and raw HTML headings', () =>
 });
 
 test('names headings through Astro’s actual Markdown pipeline, including split raw tags', async () => {
-  // Resolve the Markdown engine from Astro's own declared dependency tree.
-  const astroRequire = createRequire(import.meta.resolve('astro/package.json'));
-  const { createMarkdownProcessor } = await import(pathToFileURL(astroRequire.resolve('@astrojs/markdown-remark')).href);
   const processor = await createMarkdownProcessor({
     syntaxHighlight: false,
     rehypePlugins: [rehypeSlug, [rehypeAutolinkHeadings, {
@@ -56,14 +51,13 @@ test('names headings through Astro’s actual Markdown pipeline, including split
 });
 
 test('compiles MDX inline JSX and runtime expressions without evaluating them', async () => {
-  const { createMdxProcessor } = await import(new URL('./plugins.js', import.meta.resolve('@astrojs/mdx')).href);
-  const processor = createMdxProcessor({
-    syntaxHighlight: false, gfm: true, smartypants: true, remarkPlugins: [],
+  // compile is @mdx-js/mdx's public API; keep this test independent of Astro's
+  // private integration processor and its option-shape internals.
+  const options = {
     rehypePlugins: [rehypeSlug, [rehypeAutolinkHeadings, {
       behavior: 'append', properties: headingAnchorProperties, content: [],
     }]],
-    remarkRehype: {}, recmaPlugins: [], optimize: false,
-  }, { sourcemap: false });
+  };
   for (const [source, label] of [
     ['## HTML <span>markup</span>', 'Link to section: HTML markup'],
     ['## Expression {value}', 'Link to this section'],
@@ -73,10 +67,7 @@ test('compiles MDX inline JSX and runtime expressions without evaluating them', 
     ['## Image <img alt="diagram" />', 'Link to section: Image diagram'],
     ['## Image <img alt={description} />', 'Link to this section'],
   ]) {
-    const result = await processor.process(new VFile({
-      value: source, path: path.resolve('src/content/blog/fixture.mdx'),
-      data: { astro: { frontmatter: {} }, applyFrontmatterExport: { srcDir: pathToFileURL(`${path.resolve('src')}/`) } },
-    }));
+    const result = await compile(source, options);
     assert.ok(String(result).includes(label), `compiled MDX contains ${label}`);
     const compiledLabel = String(result).match(/"aria-label":\s*"([^"]*)"/)?.[1];
     assert.equal(compiledLabel, label);
