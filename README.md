@@ -53,7 +53,9 @@ progress, TOC tracking, seasonal styling, keyboard/touch permalinks, reduced
 motion and the 404. Accessibility checks are scoped to the changed chrome,
 heading links and decorative art; unchanged code-block syntax colors are
 outside that assertion. The production build fetches its OG font, so browser
-checks need network access for that build step.
+checks need network access for that build step. Playwright uses one worker
+for the shared preview port. Pull requests run the Chromium suite in CI;
+main/manual builds and deployment depend on that job passing.
 
 ## Write
 

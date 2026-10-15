@@ -55,3 +55,19 @@ reviewer rechecked these edits with no supported remaining defects.
 
 Next action: deliver the verified fix round; external head/CI status is in the
 chief-of-staff report. Keep merge/deployment excluded.
+
+
+Orchestrator follow-up: Cameron authorized a Chromium CI gate on pull requests
+and before deployment, OFL whitespace cleanup, and one Playwright worker for
+the shared preview port. The browser job is read-only; build/deploy retain
+write permissions only on their original push/manual events. PR runs do not
+deploy. Deployment concurrency stays shared, with PR groups separated by ref.
+
+- [x] Validate Actions configuration, final browser suite and net diff whitespace.
+Delivery: push the reviewed follow-up and record Actions results in the
+chief-of-staff report. Merging and deploying remain excluded.
+
+Follow-up verification: actionlint and net diff whitespace check exit 0;
+reintroduced license whitespace is rejected (exit 2). Fresh production build
+and all 11 browser cases pass with one worker. Independent read-only review
+found no supported defects; license text is unchanged apart from whitespace.
