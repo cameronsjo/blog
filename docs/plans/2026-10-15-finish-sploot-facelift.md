@@ -42,9 +42,16 @@ wrap correction with no remaining supported findings.
 
 Results: npm ci, npm test (10 tests), npm run check (zero errors/warnings/hints),
 and npm run test:browser (fresh 17-page build plus 11 Chromium tests) all exit 0.
-Six staged implementation breaks each exited 1: literal-# stripping, missing
+Seven staged implementation breaks each exited 1: literal-# stripping, missing
 season carry-over, progress stuck at zero, missing current TOC link, a quadrant
-bit error, and disabled inline-code wrapping. Each source was restored before
+bit error, disabled inline-code wrapping, and disabled article-end selection. Each source was restored before
 the final checks.
 
-Next action: deliver the feature ref and ready PR; keep merge/deployment excluded.
+CodeRabbit fix round: reproduce and fix short-final-section tracking at the
+article end (including fractional scroll rounding); strengthen the browser
+oracle to check the actual selected heading and reach permalinks through Tab
+traversal. Add concise JSDoc to the production helpers. The independent Codex
+reviewer rechecked these edits with no supported remaining defects.
+
+Next action: deliver the verified fix round; external head/CI status is in the
+chief-of-staff report. Keep merge/deployment excluded.

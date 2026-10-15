@@ -28,6 +28,7 @@ const { progress = false } = Astro.props;
   let article: HTMLElement | null = null;
   let queued = false;
 
+  /** Map the visible article bounds to a clamped progress value, including short reads. */
   function update() {
     queued = false;
     if (!fill || !article) return;
@@ -38,6 +39,7 @@ const { progress = false } = Astro.props;
     fill.style.setProperty('--progress', String(Math.min(1, Math.max(0, raw))));
   }
 
+  /** Coalesce scroll and resize events into one measurement per animation frame. */
   function schedule() {
     if (queued) return;
     queued = true;

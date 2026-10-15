@@ -78,9 +78,11 @@ export const SCARF: string[] = [
 
 const GLYPH = [' ', '▘', '▝', '▀', '▖', '▌', '▞', '▛', '▗', '▚', '▐', '▜', '▄', '▙', '▟', '█'];
 
-// Pixel grid → rows of quadrant block glyphs. Trailing blanks are trimmed; an
-// all-blank row becomes a single space, because HTML drops a newline right
-// after <pre> and an empty first row would shift the whole sprite up.
+/**
+ * Convert a pixel grid into quadrant-glyph rows, trimming trailing blanks.
+ * Keep one space for an empty row: HTML drops a newline immediately after
+ * <pre>, so a truly empty first row would shift the sprite up.
+ */
 export function toGlyphs(grid: string[]): string[] {
   const at = (x: number, y: number) => (grid[y]?.[x] === '#' ? 1 : 0);
   const width = Math.max(...grid.map((row) => row.length));

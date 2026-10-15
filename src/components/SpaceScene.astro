@@ -10,7 +10,7 @@
 // as everywhere else it appears.
 import Sploot from './Sploot.astro';
 
-// mulberry32 — tiny seeded PRNG, so the sky is deterministic.
+/** Create a mulberry32 sampler so every build draws the same decorative sky. */
 function rng(seed: number) {
   let a = seed >>> 0;
   return () => {
@@ -32,6 +32,7 @@ interface SphereOptions {
 // A dot-matrix sphere on a square grid (CSS sets an equal row/column pitch).
 // Light comes from the top-left: the lit rim takes the big dots, the far rim
 // medium ones, and the face a sparse grid of small ones.
+/** Draw a lit dot-matrix sphere with optional shadow-disc and crater cutouts. */
 function sphere(r: number, { seed, shadow, craters = 0.06 }: SphereOptions) {
   const rand = rng(seed);
   const rows: string[] = [];

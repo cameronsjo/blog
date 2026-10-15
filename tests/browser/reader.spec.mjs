@@ -57,6 +57,14 @@ for (const theme of ['dark', 'light']) {
         await expect.poll(() => page.locator('.topline__fill').evaluate((el) =>
           Number(el.style.getPropertyValue('--progress')))).toBeCloseTo(fraction, 1);
         await expect(page.locator('[data-toc-link][aria-current="location"]')).toHaveCount(1);
+        await expect.poll(() => page.evaluate(() => {
+          const links = [...document.querySelectorAll('[data-toc-link]')];
+          const headings = links.map((link) => document.getElementById(link.dataset.tocLink));
+          const articleEnd = document.querySelector('article').getBoundingClientRect().bottom;
+          const visible = headings.filter((heading) => heading.getBoundingClientRect().top <= innerHeight / 4);
+          const expected = articleEnd <= innerHeight + 1 ? headings.at(-1) : visible.at(-1) ?? headings[0];
+          return document.querySelector('[data-toc-link][aria-current="location"]').dataset.tocLink === expected.id;
+        })).toBe(true);
       }
       await expectNoOverflow(page);
       await expectChangedSurfacesAccessible(page);
@@ -71,8 +79,11 @@ for (const theme of ['dark', 'light']) {
       const anchors = page.locator('.heading-anchor');
       expect(await anchors.count()).toBeGreaterThan(0);
       const anchor = anchors.first();
-      await page.keyboard.press('Tab');
-      await anchor.focus();
+      // Exercise the actual tab order; programmatic focus could hide tabindex=-1.
+      for (let presses = 0; presses < 100; presses++) {
+        await page.keyboard.press('Tab');
+        if (await anchor.evaluate((el) => el === document.activeElement)) break;
+      }
       await expect(anchor).toBeFocused();
       await expect(anchor).toHaveAccessibleName(/Link to/);
       await expect(anchor).toHaveCSS('opacity', '1');

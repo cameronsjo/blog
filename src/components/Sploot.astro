@@ -37,8 +37,7 @@ const OVERLAYS: Partial<Record<Pose, { cls: string; rows: string[] }>> = {
   sniff: { cls: 'sploot__scent', rows: [' ', ' ', ' ', '               · ·'] },
 };
 
-// Suited: every layer drops one row to make room for the dome. The blank row
-// is a space, not '': HTML drops a newline right after <pre>.
+/** Pad suited layers by one row for the dome; a space survives <pre>'s newline trimming. */
 const lift = (rows: string[]) => (helmet ? [' ', ...rows] : rows);
 const body = lift(toGlyphs(POSES[pose]));
 const overlay = OVERLAYS[pose];

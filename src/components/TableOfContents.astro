@@ -39,8 +39,8 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 <script>
   // Scroll-spy: the current section is the last TOC heading whose top has
   // passed a line a quarter of the way down the viewport (before the first,
-  // the first). It gets aria-current="location", and on the wide-screen rail
-  // the walker moves beside it. rAF-throttled; the walker's move is a
+  // the first; once the article ends, the last). It gets aria-current="location",
+  // and on the wide-screen rail the walker moves beside it. rAF-throttled; the walker's move is a
   // --dur-max transition, so reduced-motion collapses it to a jump.
   //
   // This module runs once; View Transitions swap <body>, so refs are re-read
@@ -48,9 +48,11 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
   let links: HTMLAnchorElement[] = [];
   let targets: HTMLElement[] = [];
   let walker: HTMLElement | null = null;
+  let article: HTMLElement | null = null;
   let current: HTMLAnchorElement | null = null;
   let queued = false;
 
+  /** Select the heading at the reader's position and align its decorative walker. */
   function update() {
     queued = false;
     if (links.length === 0) return;
@@ -59,6 +61,11 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
     targets.forEach((el, i) => {
       if (el.getBoundingClientRect().top <= line) index = i;
     });
+    // A short final section can be fully read below the threshold line.
+    // One CSS pixel tolerates fractional layout/scroll rounding.
+    if (article && article.getBoundingClientRect().bottom <= window.innerHeight + 1) {
+      index = links.length - 1;
+    }
     const next = links[index];
     if (next !== current) {
       current?.removeAttribute('aria-current');
@@ -75,6 +82,7 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
     }
   }
 
+  /** Coalesce scroll and resize events into one update per animation frame. */
   function schedule() {
     if (queued) return;
     queued = true;
@@ -90,6 +98,7 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
     // A heading id the page doesn't have would misalign index ↔ link.
     if (targets.length !== links.length) links = [];
     walker = toc?.querySelector<HTMLElement>('[data-toc-walker]') ?? null;
+    article = toc?.closest('article') ?? null;
     current = null;
     update();
   });

@@ -116,13 +116,17 @@ test('progress clamps the article range, handles short articles and rebinds on n
 test('TOC spy has exactly one current link, repositions on resize and rebinds after navigation', () => {
   let tops = [100, 1000, 2000];
   let offsets = [20, 50, 80];
+  let articleBottom = 5000;
   let links = tops.map((_, i) => ({
     ...element(), dataset: { tocLink: `h${i}` },
     parentElement: { get offsetTop() { return offsets[i]; } },
   }));
   const walker = element();
   let present = true;
-  const toc = { querySelectorAll: () => links, querySelector: () => walker };
+  const toc = {
+    querySelectorAll: () => links, querySelector: () => walker,
+    closest: () => ({ getBoundingClientRect: () => ({ bottom: articleBottom }) }),
+  };
   const doc = {
     ...events(), querySelector: () => present ? toc : null,
     getElementById: (id) => ({ getBoundingClientRect: () => ({ top: tops[Number(id.slice(1))] }) }),
@@ -141,6 +145,14 @@ test('TOC spy has exactly one current link, repositions on resize and rebinds af
   offsets[1] = 95;
   win.emit('resize');
   assert.equal(walker.getAttribute('--walker-y'), '95px');
+  // A short final section is fully visible before its heading reaches the
+  // quarter-viewport line. Finishing the article must still select it.
+  articleBottom = 800.5; // tolerate fractional layout/scroll rounding within one pixel
+  win.emit('scroll');
+  assert.deepEqual(active(), [links[2]]);
+  articleBottom = 5000;
+  win.emit('scroll');
+  assert.deepEqual(active(), [links[1]]);
   present = false;
   doc.emit('astro:page-load');
   win.emit('scroll');
