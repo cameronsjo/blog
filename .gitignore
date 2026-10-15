@@ -21,3 +21,7 @@ pnpm-debug.log*
 .DS_Store
 .claude/intros/
 .claude/worktrees/
+
+# browser regression artifacts
+test-results/
+playwright-report/

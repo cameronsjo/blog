@@ -29,13 +29,31 @@ Cameron Sjo's blog. Built with [Astro](https://astro.build), deployed to GitHub 
 
 ## Develop
 
+Use Node 22.12 or newer (the Astro toolchain minimum).
+
 ```bash
-npm install      # once
+npm ci           # install the locked dependencies
 npm run dev      # http://localhost:4321/blog/
 npm run build    # static output to dist/
 npm run preview  # serve the built site
 npm run check    # type-check content + components
+npm test         # heading, reader-lifecycle and sprite regressions
 ```
+
+Browser checks use Chromium and build fresh static output before starting a
+temporary localhost preview:
+
+```bash
+PLAYWRIGHT_SKIP_BROWSER_GC=1 npx playwright install chromium
+npm run test:browser
+```
+
+The browser suite covers dark/light layouts, client navigation, reading
+progress, TOC tracking, seasonal styling, keyboard/touch permalinks, reduced
+motion and the 404. Accessibility checks are scoped to the changed chrome,
+heading links and decorative art; unchanged code-block syntax colors are
+outside that assertion. The production build fetches its OG font, so browser
+checks need network access for that build step.
 
 ## Write
 

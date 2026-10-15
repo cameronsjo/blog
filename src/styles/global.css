@@ -140,6 +140,10 @@ code, pre, kbd {
   border-radius: var(--radius-sm);
   font-weight: 400;
 }
+/* Long inline paths must wrap on phones; fenced blocks keep their own scroll. */
+.prose :not(pre) > code {
+  overflow-wrap: anywhere;
+}
 /* Prose links: animated underline that draws in on hover (state, not arrival). */
 .prose :where(a):not(:where([class~="not-prose"] *)) {
   text-decoration: none;

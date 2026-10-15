@@ -1,0 +1,18 @@
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  testDir: './tests/browser',
+  timeout: 45_000,
+  workers: 2,
+  use: {
+    baseURL: 'http://127.0.0.1:4327',
+    browserName: 'chromium',
+    screenshot: 'only-on-failure',
+    trace: 'retain-on-failure',
+  },
+  webServer: {
+    command: 'node tests/preview.mjs',
+    url: 'http://127.0.0.1:4327/blog/',
+    reuseExistingServer: false,
+  },
+});
