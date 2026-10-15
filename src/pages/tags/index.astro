@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Sploot from '../../components/Sploot.astro';
 import { SITE_TITLE } from '../../consts';
 import { withBase } from '../../utils';
 
@@ -33,7 +34,10 @@ const tags = [...counts.entries()].sort(
         ))}
       </ul>
     ) : (
-      <p style="color: var(--fg-secondary)">No tags yet.</p>
+      <div class="sploot-note sploot-host reveal" style="--i: 1">
+        <Sploot pose="sleep" />
+        <p>No tags yet.</p>
+      </div>
     )
   }
 </BaseLayout>
