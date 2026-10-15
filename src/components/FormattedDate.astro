@@ -12,6 +12,9 @@ const { date } = Astro.props;
       year: 'numeric',
       month: 'short',
       day: 'numeric',
+      // Frontmatter dates are date-only, which parse as UTC midnight. Format
+      // in UTC so a build west of UTC doesn't print the previous day.
+      timeZone: 'UTC',
     })
   }
 </time>

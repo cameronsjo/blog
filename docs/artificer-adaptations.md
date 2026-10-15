@@ -4,7 +4,39 @@ How this project bends the Artificer design system, and why. Each surviving
 entry mirrors a feedback issue filed upstream — a divergence not worth filing
 is not worth keeping.
 
-## 2026-09-29 · Facelift: reading-progress top rule, Sploot, block-glyph font (0.22.1)
+## 2026-10-12 · 0.22.1 → 0.27.0, canonical theme toggle, `.eyebrow`
+
+**Ledger walk.** The only breaking event in range is 0.24.0's removal of the
+copy-consumed React `useTheme` hook. The blog never used it.
+
+**Adopted.**
+
+- `@cameronsjo/artificer/theme.js` replaces the hand-rolled two-state
+  toggle (the `Dark`/`Light` text pill). The header now carries the empty
+  canonical button, and the pre-paint bootstrap matches the root site's.
+  Toggles cycle dark → light → auto on both sites. `astro:page-load` calls
+  `ArtificerTheme.bind()` because view transitions swap `<body>` out from
+  under theme.js's MutationObserver. An `astro:before-swap` listener copies
+  `data-theme` onto the incoming document: the swap replaces `<html>`'s
+  attributes, and without it every link click painted the default theme
+  until the rebind. The old toggle had the same gap.
+- `.eyebrow` (0.27.0) labels the table of contents.
+
+**Local fixes in the same pass.** The TOC dropped its raised card and left
+stripe (an Artificer anti-pattern) for hairline rules. Heading anchors draw
+their `#` in CSS, so it no longer leaks into heading text and every TOC entry.
+The index rail widened so dates stay on one line. Tags got bottom padding off
+the next rule. The browse row lost its duplicate top rule. The footer dropped
+its double-padding `.container` wrapper.
+
+**Adoption map (advisory, not applied).** `editorial.css` ships the packaged
+form of `src/styles/global.css`'s editorial layer (`.entries`, `.entry`,
+`.masthead`, `.editorial-hero`, `.reveal`, `.prose`). Class names differ
+(`.entry__desc` vs `.entry__excerpt`, `.entry__rail` vs `.entry__meta`), so
+adopting it is a markup change across `PostCard.astro` and `index.astro`.
+`texture.css` `.tex-grain` covers the hand-rolled `body::before` grain.
+
+## 2026-09-29 · Facelift: reading-progress top rule, Sploot, block-glyph font (reconciled with 0.27.0)
 
 **Reading progress.** The fixed gold → purple `.topline` moved into
 `ReadingProgress.astro`. On posts (`PostLayout` passes `progress`, the
@@ -53,13 +85,15 @@ converted to glyphs at build time:
   `aria-current="location"` on the current section's link (accent + bold, not
   color alone), and a mini Sploot (`aria-hidden`) moves beside it in the
   gutter, a `--dur-max` transition. On narrow screens the TOC stays in the
-  column with the same highlight and no walker. Entries no longer end in the
-  autolink `#` that Astro's heading text picked up.
+  column with the same highlight and no walker. Heading text is preserved verbatim: the base already draws permalink `#`
+  glyphs in CSS, so a real trailing `#` is not stripped.
 - **Empty states** (no posts, no tags) show Sploot asleep with z's.
 - **The new `404.astro`** shows Sploot sniffing, with literal copy (what's
   missing, why, where to go).
 - **Winter scarf.** The pre-paint script sets `<html data-season>` from the
   reader's clock, and December–February shows a `--brand-purple` scarf layer.
+  `astro:before-swap` copies `data-season` alongside `data-theme` so the scarf
+  persists across client navigation.
 - **Favicon.** Sploot's head in profile. A favicon can't read page tokens, so
   it carries the dark bg and accent hexes.
 

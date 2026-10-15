@@ -8,18 +8,15 @@ interface Props {
 
 const { headings } = Astro.props;
 // h2/h3 only — h1 is the post title, h4+ is too granular for a sidebar TOC.
-// rehype-autolink-headings appends a "#" anchor inside each heading, and
-// Astro's heading text includes it; strip it so entries don't end in "#".
-const toc = headings
-  .filter((h) => h.depth === 2 || h.depth === 3)
-  .map((h) => ({ ...h, text: h.text.replace(/\s*#$/, '') }));
+// Heading permalink glyphs are CSS-generated; preserve literal text such as C#.
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
 {
   toc.length > 1 && (
     <div class="toc-rail not-prose">
       <nav class="toc" aria-label="Table of contents" data-toc>
-        <p class="toc__label">On this page</p>
+        <p class="toc__label eyebrow">On this page</p>
         <ul class="toc__list">
           {toc.map((h) => (
             <li class:list={['toc__item', { 'toc__item--sub': h.depth === 3 }]}>
@@ -103,19 +100,12 @@ const toc = headings
 <style>
   .toc {
     position: relative;
-    margin-bottom: var(--s-lg);
-    padding: var(--s-sm) var(--s-md);
-    border-left: 2px solid var(--border);
-    background: var(--bg-raised);
-    border-radius: var(--radius-sm);
+    margin-bottom: var(--s-xl);
+    padding: var(--s-md) 0;
+    border-block: 1px solid var(--border);
   }
   .toc__label {
     margin: 0 0 var(--s-sm);
-    font-family: var(--font-mono);
-    font-size: var(--t-label-xs-size);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--fg-secondary);
   }
   .toc__list {
     margin: 0;

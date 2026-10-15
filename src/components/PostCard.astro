@@ -44,9 +44,10 @@ const tags = post.data.tags;
     display: flex;
     flex-wrap: wrap;
     gap: var(--s-xs, 0.4rem);
-    margin: -0.5rem 0 0;
-    /* Align under .entry__main: rail column (3.5rem) + grid gap. */
-    padding: 0 0 0 calc(3.5rem + var(--s-lg));
+    margin: calc(-1 * var(--s-sm)) 0 0;
+    /* Align under .entry__main: rail column + grid gap. The bottom padding
+       keeps the tags off the next entry's top rule. */
+    padding: 0 0 var(--s-lg) calc(var(--entry-rail) + var(--s-lg));
     list-style: none;
   }
   @media (max-width: 640px) {

@@ -26,21 +26,21 @@ const nav = [
       nav.map((item) => {
         const active = path === item.href.replace(/\/$/, '');
         return (
-          <a href={item.href} aria-current={active ? 'page' : undefined}>
+          <a class="nav-link" href={item.href} aria-current={active ? 'page' : undefined}>
             {item.label}
           </a>
         );
       })
     }
+    {/* Canonical Artificer toggle, the same one the root site uses:
+        @cameronsjo/artificer/theme.js injects the glyph and runs the
+        dark → light → auto cycle. */}
     <button
       type="button"
-      class="theme-toggle theme-toggle--inline font-mono"
+      class="theme-toggle theme-toggle--inline"
       data-theme-toggle
-      aria-label="Toggle color theme"
-    >
-      <span class="dot" aria-hidden="true"></span>
-      <span data-theme-label>Dark</span>
-    </button>
+      aria-label="Toggle theme"
+    ></button>
   </nav>
 </header>
 
@@ -94,9 +94,7 @@ const nav = [
       gap: var(--s-md);
     }
   }
-  /* Narrow phones: tighten the row and drop the toggle to its dot so the
-     header never outgrows a 320px viewport. The label stays in the
-     accessibility tree; the button keeps its aria-label either way. */
+  /* Keep the canonical glyph toggle usable on narrow phones. */
   @media (max-width: 400px) {
     .site-header,
     .site-nav {
@@ -107,39 +105,5 @@ const nav = [
       min-width: 44px;
       min-height: 44px;
     }
-    .theme-toggle [data-theme-label] {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      clip-path: inset(50%);
-      white-space: nowrap;
-    }
-  }
-
-  .theme-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--s-xs);
-    padding: var(--s-xs) var(--s-sm);
-    font-size: var(--t-label-sm-size);
-    color: var(--fg-secondary);
-    background: transparent;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition:
-      border-color var(--dur-fast) var(--ease),
-      color var(--dur-fast) var(--ease);
-  }
-  .theme-toggle:hover {
-    color: var(--fg);
-    border-color: var(--accent);
-  }
-  .theme-toggle .dot {
-    width: var(--s-sm);
-    height: var(--s-sm);
-    border-radius: 50%;
-    background: var(--accent);
   }
 </style>

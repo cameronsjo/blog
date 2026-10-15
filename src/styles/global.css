@@ -235,9 +235,10 @@ body::before {
   margin: 0;
   padding: 0;
 }
+:root { --entry-rail: 6.5rem; }
 .entry {
   display: grid;
-  grid-template-columns: 3.5rem 1fr;
+  grid-template-columns: var(--entry-rail) 1fr;
   gap: var(--s-lg);
   padding: var(--s-lg) 0;
   border-top: 1px solid var(--border);
@@ -266,6 +267,7 @@ body::before {
 }
 .entry__date {
   font-size: 12px;
+  white-space: nowrap;
   color: var(--fg-secondary);
 }
 .entry__main {
@@ -311,7 +313,7 @@ body::before {
 }
 .heading-anchor {
   margin-left: 0.4rem;
-  color: var(--fg-disabled);
+  color: var(--fg-secondary);
   font-weight: 400;
   text-decoration: none;
   opacity: 0;
@@ -319,12 +321,21 @@ body::before {
     opacity var(--dur-fast) var(--ease),
     color var(--dur-fast) var(--ease);
 }
+.heading-anchor::after {
+  content: "#";
+}
 .prose :is(h2, h3, h4):hover .heading-anchor,
 .heading-anchor:focus-visible {
   opacity: 1;
 }
 .heading-anchor:hover {
   color: var(--accent);
+}
+
+@media (hover: none) {
+  .heading-anchor {
+    opacity: 1;
+  }
 }
 
 @media (max-width: 640px) {

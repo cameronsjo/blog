@@ -11,6 +11,7 @@ import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import pagefind from 'astro-pagefind';
 import { remarkReadingTime } from './src/plugins/remark-reading-time.mjs';
+import { headingAnchorProperties } from './src/plugins/heading-anchor-properties.mjs';
 
 // Map of post slug → ISO lastmod (updatedDate, else pubDate), read straight from
 // the content frontmatter at config load. astro:content isn't available here, so
@@ -104,8 +105,11 @@ export default defineConfig({
         rehypeAutolinkHeadings,
         {
           behavior: 'append',
-          properties: { className: ['heading-anchor'], ariaHidden: true, tabIndex: -1 },
-          content: { type: 'text', value: '#' },
+          properties: headingAnchorProperties,
+          // Empty on purpose: the `#` glyph is drawn by CSS (.heading-anchor::after).
+          // A text node here becomes part of the heading's text, so every
+          // table-of-contents entry ended in a stray `#`.
+          content: [],
         },
       ],
     ],
