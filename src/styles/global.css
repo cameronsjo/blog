@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/* Fonts (iA Writer Quattro S + JetBrains Mono) are provided by
+/* Fonts (Bricolage Grotesque + Recursive + JetBrains Mono) are provided by
    @cameronsjo/artificer's bundled @font-face — Vite resolves and emits the
    hashed woff2 from node_modules under the /blog/ base. */
 
@@ -39,7 +39,7 @@
 
 /* Expose the font stacks as Tailwind theme vars (font-sans / font-mono). */
 @theme {
-  --font-sans: "iA Writer Quattro S", "Iowan Old Style", "Charter", system-ui, sans-serif;
+  --font-sans: "Bricolage Grotesque", "Source Sans 3", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", "Berkeley Mono", ui-monospace, "SF Mono", Menlo, monospace;
 }
 
