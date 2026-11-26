@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@cameronsjo/artificer/tailwind.css";
 @plugin "@tailwindcss/typography";
 
 /* Fonts (Bricolage Grotesque + Recursive + JetBrains Mono) are provided by
@@ -37,11 +38,8 @@
   unicode-range: U+2500-25FF;
 }
 
-/* Expose the font stacks as Tailwind theme vars (font-sans / font-mono). */
-@theme {
-  --font-sans: "Bricolage Grotesque", "Source Sans 3", system-ui, -apple-system, sans-serif;
-  --font-mono: "JetBrains Mono", "Berkeley Mono", ui-monospace, "SF Mono", Menlo, monospace;
-}
+/* Tailwind v4 theme vars (--font-sans, --font-mono, colors, spacing) come from
+   @cameronsjo/artificer/tailwind.css imported at the top of this file. */
 
 /* ── Blog-specific base ──────────────────────────────────────────────────
    @cameronsjo/artificer (artificer.css) owns the full semantic palette, the

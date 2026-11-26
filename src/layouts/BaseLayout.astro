@@ -101,15 +101,11 @@ const CF_BEACON_TOKEN = '9db7302de886402680e0838d0f35f7db';
     </script>
     <script>
       import '@cameronsjo/artificer/theme.js';
-      // View Transitions replace <html>'s attributes with the incoming
-      // document's, and the server-rendered <html> has no data-theme. Carry
-      // the live theme onto the new document before the swap, or every link
-      // click paints the default theme until theme.js rebinds.
+      // data-theme + toggle rebinding are handled by artificer-theme.js (v0.29.0+).
+      // Carry only blog-local data-season across Astro View Transitions.
       document.addEventListener('astro:before-swap', (e) => {
-        for (const name of ['data-theme', 'data-season']) {
-          const value = document.documentElement.getAttribute(name);
-          if (value) e.newDocument.documentElement.setAttribute(name, value);
-        }
+        const value = document.documentElement.getAttribute('data-season');
+        if (value) e.newDocument.documentElement.setAttribute('data-season', value);
       });
       // The swap also replaces <body>, so the toggle arrives unbound and
       // theme.js's MutationObserver is still watching the old body. Rebind
